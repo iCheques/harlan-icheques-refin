@@ -20,9 +20,10 @@
             var addItem = function (name, value) { return value && result.addItem(name, value); };
 
             data.spc.forEach(function (spc) {
-              var separatorElement = result.addSeparator('Restrição no SPC/Serasa',
+              var separatorElement = result.addSeparator('Restrição no Refin/Pefin',
                 'Apontamentos e Restrições Financeiras e Comerciais',
-                'Pendências e restrições financeiras nos bureaus de crédito Serasa e SPC');
+                'Pendências e restrições financeiras nos bureaus de crédito Refin e Pefin')
+                .addClass('error');
               if (firstCall) {
                 $('html, body').animate({
                   scrollTop: separatorElement.offset().top,
@@ -43,9 +44,9 @@
             });
 
             if (data.consultaRealizada.length) {
-              result.addSeparator('Consulta Realizada por Associado do SPC/Serasa',
-                'Consulta Realizada por Associado do SPC/Serasa',
-                'Um associado do SPC/Serasa consultou este CNPJ/CPF a procura de apontamentos e restrições financeiras e comerciais');
+              result.addSeparator('Consulta Realizada por Associado do Refin e Pefin',
+                'Consulta Realizada por Associado do Refin/Pefin',
+                'Um associado do Refin/Pefin consultou este CNPJ/CPF a procura de apontamentos e restrições financeiras e comerciais');
 
               data.consultaRealizada.forEach(function (consultaRealizada) {
                 addItem('Nome Associado', consultaRealizada.NomeAssociado);
