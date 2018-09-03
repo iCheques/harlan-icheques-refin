@@ -26,4 +26,4 @@ None
 - [rollup-plugin-buble](): 
 
 ## License
-[ISC]()
+[MIT](http://escolhaumalicenca.com.br/licencas/mit/)
