@@ -1,5 +1,6 @@
 import harlan from 'harlan';
 import $ from 'jquery';
+import { CPF, CNPJ } from 'cpf_cnpj';
 
 harlan.addPlugin((controller) => {
   controller.registerCall('icheques::consulta::refin', (result, doc, refinButton) => controller.call('credits::has', 250, () => controller.server.call('SELECT FROM \'PROTESTOS\'.\'REFIN\'',
@@ -15,6 +16,15 @@ harlan.addPlugin((controller) => {
 
           let firstCall = true;
           const addItem = (name, value) => value && result.addItem(name, value);
+
+          if (!data.spc.length) {
+            controller.call('alert', {
+              icon: 'pass',
+              title: 'Não foram encontrados registros de Refin/Pefin',
+              subtitle: 'O sistema não encontrou nenhum registro de Refin/Pefin para o documento informado.',
+              paragraph: `Para o documento ${CPF.isValid(doc) ? CPF.format(doc) : CNPJ.format(doc)} não foram encontrados registros de Refin/Pefin.`,
+            });
+          }
 
           data.spc.forEach((spc) => {
             const separatorElement = result.addSeparator('Restrição no Refin/Pefin',
