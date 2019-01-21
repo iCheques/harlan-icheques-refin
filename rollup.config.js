@@ -4,12 +4,13 @@ import commonjs from 'rollup-plugin-commonjs';
 
 export default {
   input: 'src/index.js',
-  external: ['harlan', 'jquery'],
+  external: ['harlan', 'jquery', 'numeral'],
   output: {
     file: 'index.js',
     name: 'HarlanIChequesRefin',
     format: 'iife',
     globals: {
+      numeral: 'numeral',
       harlan: 'harlan',
       jquery: '$',
     },
