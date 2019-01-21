@@ -1527,7 +1527,11 @@
 	    var imoveisButton = null;
 	    imoveisButton = $('<button />')
 	      .text('Consultar Imóveis')
-	      .addClass('button');
+	      .addClass('button')
+	      .append($('<small />').text('Apenas São Paulo Capital').css({
+	        display: 'block',
+	        margin: '9px',
+	      }));
 
 	    imoveisButton.click(controller.click('icheques::consulta::imoveis', result, doc, imoveisButton));
 	    result.addItem().prepend(imoveisButton);
