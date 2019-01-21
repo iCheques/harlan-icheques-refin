@@ -144,7 +144,7 @@ harlan.addPlugin((controller) => {
       .addClass('button')
       .append($('<small />').text('Apenas São Paulo Capital').css({
         display: 'block',
-        margin: '9px',
+        'font-size': '9px',
       }));
 
     imoveisButton.click(controller.click('icheques::consulta::imoveis', result, doc, imoveisButton));
