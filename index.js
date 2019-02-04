@@ -1524,6 +1524,7 @@
 	    var result = ref.result;
 	    var doc = ref.doc;
 
+	    if (cpf_cnpj_2.isValid(doc)) { return; }
 	    var imoveisButton = null;
 	    imoveisButton = $('<button />')
 	      .text('Consultar Imóveis')

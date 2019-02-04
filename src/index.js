@@ -138,6 +138,7 @@ harlan.addPlugin((controller) => {
       })))));
 
   controller.registerTrigger('ccbusca::parser', 'imoveis', ({ result, doc }, cb) => {
+    if (CNPJ.isValid(doc)) return;
     let imoveisButton = null;
     imoveisButton = $('<button />')
       .text('Consultar Imóveis')
