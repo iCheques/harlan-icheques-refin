@@ -153,7 +153,7 @@ harlan.addPlugin((controller) => {
     cb();
   });
 
-
+/*
   controller.registerTrigger('ccbusca::parser', 'refin', ({ result, doc }, cb) => {
     let refinButton = null;
     refinButton = $('<button />')
@@ -164,4 +164,5 @@ harlan.addPlugin((controller) => {
     result.addItem().prepend(refinButton);
     cb();
   });
+*/
 });
