@@ -1,4 +1,4 @@
-(function (harlan,$,numeral) {
+(function (harlan, $, numeral) {
 	'use strict';
 
 	harlan = harlan && harlan.hasOwnProperty('default') ? harlan['default'] : harlan;
@@ -32,7 +32,7 @@
 
 	var isArray_1 = isArray;
 
-	var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
+	var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
 	function createCommonjsModule(fn, module) {
 		return module = { exports: {} }, fn(module, module.exports), module.exports;
@@ -541,15 +541,13 @@
 	 * @param {Array} [entries] The key-value pairs to cache.
 	 */
 	function Hash(entries) {
-	  var this$1 = this;
-
 	  var index = -1,
 	      length = entries == null ? 0 : entries.length;
 
 	  this.clear();
 	  while (++index < length) {
 	    var entry = entries[index];
-	    this$1.set(entry[0], entry[1]);
+	    this.set(entry[0], entry[1]);
 	  }
 	}
 
@@ -734,15 +732,13 @@
 	 * @param {Array} [entries] The key-value pairs to cache.
 	 */
 	function ListCache(entries) {
-	  var this$1 = this;
-
 	  var index = -1,
 	      length = entries == null ? 0 : entries.length;
 
 	  this.clear();
 	  while (++index < length) {
 	    var entry = entries[index];
-	    this$1.set(entry[0], entry[1]);
+	    this.set(entry[0], entry[1]);
 	  }
 	}
 
@@ -887,15 +883,13 @@
 	 * @param {Array} [entries] The key-value pairs to cache.
 	 */
 	function MapCache(entries) {
-	  var this$1 = this;
-
 	  var index = -1,
 	      length = entries == null ? 0 : entries.length;
 
 	  this.clear();
 	  while (++index < length) {
 	    var entry = entries[index];
-	    this$1.set(entry[0], entry[1]);
+	    this.set(entry[0], entry[1]);
 	  }
 	}
 
@@ -1539,11 +1533,11 @@
 	    cb();
 	  });
 
-
 	  controller.registerTrigger('ccbusca::parser', 'refin', function (ref, cb) {
 	    var result = ref.result;
 	    var doc = ref.doc;
 
+	    cb();
 	    var refinButton = null;
 	    refinButton = $('<button />')
 	      .text('Consultar Refin')
@@ -1551,8 +1545,7 @@
 
 	    refinButton.click(controller.click('icheques::consulta::refin', result, doc, refinButton));
 	    result.addItem().prepend(refinButton);
-	    cb();
 	  });
 	});
 
-}(harlan,$,numeral));
+}(harlan, $, numeral));
