@@ -91,8 +91,8 @@ harlan.addPlugin((controller) => {
           if (!data.spc.length) {
             controller.call('alert', {
               icon: 'pass',
-              title: 'Não foram encontrados registros de Refin/Pefin',
-              subtitle: 'O sistema não encontrou nenhum registro de Refin/Pefin para o documento informado.',
+              title: 'Não há Pefin/Refin Serasa no Target',
+              subtitle: 'O sistema encontrou 0 ocorrêmcias de Pefin/Refin para o documento informado.',
               paragraph: `Para o documento ${CPF.isValid(doc) ? CPF.format(doc) : CNPJ.format(doc)} não foram encontrados registros de Refin/Pefin.`,
             });
           }
@@ -122,9 +122,9 @@ harlan.addPlugin((controller) => {
           });
 
           if (data.consultaRealizada.length) {
-            result.addSeparator('Consulta Realizada por Associado do Refin e Pefin',
-              'Consulta Realizada por Associado do Refin/Pefin',
-              'Um associado do Refin/Pefin consultou este CNPJ/CPF a procura de apontamentos e restrições financeiras e comerciais');
+            result.addSeparator('Histórico de Pefin/Refin Serasa',
+              'Veja o histórico de Pefin/Refin do Target',
+              'No passado um CPF/CNPJ consultou Pefin/Refin neste Target.');
 
             data.consultaRealizada.forEach((consultaRealizada) => {
               addItem('Nome Associado', consultaRealizada.NomeAssociado);
@@ -141,9 +141,9 @@ harlan.addPlugin((controller) => {
     if (CNPJ.isValid(doc)) return;
     let imoveisButton = null;
     imoveisButton = $('<button />')
-      .text('Consultar Imóveis')
+      .text('Consultar Imóveis SP Capital')
       .addClass('button')
-      .append($('<small />').text('Apenas São Paulo Capital').css({
+      .append($('<small />').text('CPF Somente - R$20).css({
         display: 'block',
         'font-size': '9px',
       }));
@@ -157,8 +157,12 @@ harlan.addPlugin((controller) => {
     cb();
     let refinButton = null;
     refinButton = $('<button />')
-      .text('Consultar Refin')
+      .text('Consultar Pefin/Refin Serasa')
       .addClass('button');
+      .append($('<small />').text('CPF/CNPJ - R$2,50).css({
+        display: 'block',
+        'font-size': '9px',
+      }));
 
     refinButton.click(controller.click('icheques::consulta::refin', result, doc, refinButton));
     result.addItem().prepend(refinButton);
