@@ -1382,170 +1382,292 @@
 	var cpf_cnpj_2 = cpf_cnpj.CNPJ;
 
 	harlan.addPlugin(function (controller) {
-	  controller.registerCall('icheques::consulta::imoveis', function (result, doc, imoveisButton) { return controller.call('credits::has', 20000, function () { return controller.server.call('SELECT FROM \'IMOVEIS\'.\'CONSULTA\'',
-	    controller.call('loader::ajax', controller.call('error::ajax',
-	      {
-	        dataType: 'json',
-	        data: {
-	          documento: doc.replace(/[^0-9]/g, ''),
-	        },
+	  var hasCredits = function (c, b) { return controller.server.call(
+	    "SELECT FROM 'ICHEQUES'.'IPAYTHEBILL'",
+	    controller.call('loader::ajax', {
+	      dataType: 'json',
+	      success: function (data) {
+	        if (data) {
+	          controller.call('credits::has', c, function () {
+	            b();
+	          });
+	        } else {
+	          b();
+	        }
+	      },
+	    })
+	  ); };
 
-	        success: function (data) {
-	          var fieldset = imoveisButton.parent();
-	          imoveisButton.remove();
+	  controller.registerCall(
+	    'icheques::consulta::imoveis',
+	    function (result, doc, imoveisButton) { return hasCredits(20000, function () { return controller.server.call(
+	      "SELECT FROM 'IMOVEIS'.'CONSULTA'",
+	      controller.call(
+	        'loader::ajax',
+	        controller.call('error::ajax', {
+	          dataType: 'json',
+	          data: {
+	            documento: doc.replace(/[^0-9]/g, ''),
+	          },
 
-	          var firstCall = true;
-	          var addItem = function (name, value) { return (value ? result.addItem(name, value) : null); };
-	          var iptus = get_1(data, 'Iptus', []);
+	          success: function (data) {
+	            var fieldset = imoveisButton.parent();
+	            imoveisButton.remove();
 
-	          var r = function (d) { return (d ? d.insertBefore(fieldset) : null); };
+	            var firstCall = true;
+	            var addItem = function (name, value) { return (value ? result.addItem(name, value) : null); };
+	            var iptus = get_1(data, 'Iptus', []);
 
-	          r(addItem('Score', get_1(data, 'Score')));
-	          r(addItem('Título de Eleitor', get_1(data, 'Person.VoterRegistration')));
-	          r(addItem('Salário Presumido', get_1(data, 'Person.SalaryPresumed')));
-	          r(addItem('Aposentadoria', get_1(data, 'Person.RetiredSalary')));
-	          r(addItem('Classe Social', get_1(data, 'Person.ClasseSocial')));
+	            var r = function (d) { return (d ? d.insertBefore(fieldset) : null); };
 
-	          imoveisButton.remove();
+	            r(addItem('Score', get_1(data, 'Score')));
+	            r(
+	              addItem(
+	                'Título de Eleitor',
+	                get_1(data, 'Person.VoterRegistration')
+	              )
+	            );
+	            r(
+	              addItem(
+	                'Salário Presumido',
+	                get_1(data, 'Person.SalaryPresumed')
+	              )
+	            );
+	            r(addItem('Aposentadoria', get_1(data, 'Person.RetiredSalary')));
+	            r(addItem('Classe Social', get_1(data, 'Person.ClasseSocial')));
 
-	          if (!iptus.length) {
-	            controller.call('alert', {
-	              title: 'Não foram encontrados registros de IPTU',
-	              subtitle: 'O sistema não encontrou nenhum registro de IPTU para o documento informado.',
-	              paragraph: ("Para o documento " + (cpf_cnpj_1.isValid(doc) ? cpf_cnpj_1.format(doc) : cpf_cnpj_2.format(doc)) + " não foram encontrados registros de IPTU."),
-	            });
-	          }
+	            imoveisButton.remove();
 
-	          iptus.forEach(function (iptu) {
-	            var separatorElement = result.addSeparator('Registro de IPTU no Nome',
-	              'Apontamentos de IPTU para o documento informado',
-	              'Imposto Predial e Territorial Urbano sendo cobrado para o documento')
-	              .addClass('error');
-	            if (firstCall) {
-	              $('html, body').animate({
-	                scrollTop: separatorElement.offset().top,
-	              }, 2000);
-	              firstCall = false;
+	            if (!iptus.length) {
+	              controller.call('alert', {
+	                title: 'Não foram encontrados registros de IPTU',
+	                subtitle:
+	                      'O sistema não encontrou nenhum registro de IPTU para o documento informado.',
+	                paragraph: ("Para o documento " + (cpf_cnpj_1.isValid(doc) ? cpf_cnpj_1.format(doc) : cpf_cnpj_2.format(doc)) + " não foram encontrados registros de IPTU."),
+	              });
 	            }
 
-	            addItem('Procolo', iptu.Protocolo);
-	            addItem('Setor, Quadra ou Lote', iptu.SetorQuadraLote);
-	            addItem('Dia do Vencimento', iptu.DiaVencimento);
-	            addItem('Data da Consulta do Proprietario', iptu.DataConsultaProprietario);
-	            addItem('Situação', iptu.Situacao);
-	            addItem('Setor', iptu.Setor);
-	            addItem('Quadra', iptu.Quadra);
-	            addItem('Lote', iptu.Lote);
-	            addItem('Endereço', iptu.Endereco);
-	            addItem('CEP', iptu.CEP);
-	            addItem('Código', iptu.CodLog);
-	            addItem('Área do Terreno', iptu.AreaTerreno ? ((numeral(iptu.AreaTerreno).format()) + " m²") : null);
-	            addItem('Área do Testada', iptu.Testada ? ((numeral(iptu.Testada).format()) + " m²") : null);
-	            addItem('Fração Ideal', iptu.FracaoIdeal);
-	            addItem('Área Construída', iptu.AreaConstruida ? ((numeral(iptu.AreaConstruida).format()) + " m²") : null);
-	            addItem('Ano de Construção', iptu.AnoConstrucao ? numeral(iptu.AnoConstrucao).format() : null);
-	            addItem('Base de Cálculo do IPTU', iptu.AnoConstrucao ? numeral(iptu.AnoConstrucao).format('$0,0.00') : null);
-	            addItem('Data de Consulta do Cadastro', iptu.DataConsultaCadastro);
-	          });
-	        },
-	      }))); }); });
+	            iptus.forEach(function (iptu) {
+	              var separatorElement = result
+	                .addSeparator(
+	                  'Registro de IPTU no Nome',
+	                  'Apontamentos de IPTU para o documento informado',
+	                  'Imposto Predial e Territorial Urbano sendo cobrado para o documento'
+	                )
+	                .addClass('error');
+	              if (firstCall) {
+	                $('html, body').animate(
+	                  {
+	                    scrollTop: separatorElement.offset().top,
+	                  },
+	                  2000
+	                );
+	                firstCall = false;
+	              }
 
-
-	  controller.registerCall('icheques::consulta::refin', function (result, doc, refinButton) { return controller.call('credits::has', 2500, function () { return controller.server.call('USING \'REFIN\' SELECT FROM \'PROTESTOS\'.\'REFINALTERNATIVE\'',
-	    controller.call('loader::ajax', controller.call('error::ajax',
-	      {
-	        dataType: 'json',
-	        data: {
-	          documento: doc.replace(/[^0-9]/g, ''),
-	        },
-
-	        success: function (data) {
-	          refinButton.remove();
-
-	          var firstCall = true;
-	          var addItem = function (name, value) { return value && result.addItem(name, value); };
-
-	          if (!data.spc.length) {
-	            controller.call('alert', {
-	              icon: 'pass',
-	              title: 'Não foram encontrados registros de Refin/Pefin',
-	              subtitle: 'O sistema não encontrou nenhum registro de Refin/Pefin para o documento informado.',
-	              paragraph: ("Para o documento " + (cpf_cnpj_1.isValid(doc) ? cpf_cnpj_1.format(doc) : cpf_cnpj_2.format(doc)) + " não foram encontrados registros de Refin/Pefin."),
+	              addItem('Procolo', iptu.Protocolo);
+	              addItem('Setor, Quadra ou Lote', iptu.SetorQuadraLote);
+	              addItem('Dia do Vencimento', iptu.DiaVencimento);
+	              addItem(
+	                'Data da Consulta do Proprietario',
+	                iptu.DataConsultaProprietario
+	              );
+	              addItem('Situação', iptu.Situacao);
+	              addItem('Setor', iptu.Setor);
+	              addItem('Quadra', iptu.Quadra);
+	              addItem('Lote', iptu.Lote);
+	              addItem('Endereço', iptu.Endereco);
+	              addItem('CEP', iptu.CEP);
+	              addItem('Código', iptu.CodLog);
+	              addItem(
+	                'Área do Terreno',
+	                iptu.AreaTerreno
+	                  ? ((numeral(iptu.AreaTerreno).format()) + " m²")
+	                  : null
+	              );
+	              addItem(
+	                'Área do Testada',
+	                iptu.Testada ? ((numeral(iptu.Testada).format()) + " m²") : null
+	              );
+	              addItem('Fração Ideal', iptu.FracaoIdeal);
+	              addItem(
+	                'Área Construída',
+	                iptu.AreaConstruida
+	                  ? ((numeral(iptu.AreaConstruida).format()) + " m²")
+	                  : null
+	              );
+	              addItem(
+	                'Ano de Construção',
+	                iptu.AnoConstrucao
+	                  ? numeral(iptu.AnoConstrucao).format()
+	                  : null
+	              );
+	              addItem(
+	                'Base de Cálculo do IPTU',
+	                iptu.AnoConstrucao
+	                  ? numeral(iptu.AnoConstrucao).format('$0,0.00')
+	                  : null
+	              );
+	              addItem(
+	                'Data de Consulta do Cadastro',
+	                iptu.DataConsultaCadastro
+	              );
 	            });
-	          }
+	          },
+	        })
+	      )
+	    ); }); }
+	  );
 
-	          data.spc.forEach(function (spc) {
-	            var separatorElement = result.addSeparator('Restrição no Refin/Pefin',
-	              'Apontamentos e Restrições Financeiras e Comerciais',
-	              'Pendências e restrições financeiras nos bureaus de crédito Refin e Pefin')
-	              .addClass('error');
-	            if (firstCall) {
-	              $('html, body').animate({
-	                scrollTop: separatorElement.offset().top,
-	              }, 2000);
-	              firstCall = false;
+	  controller.registerCall(
+	    'icheques::consulta::refin',
+	    function (result, doc, refinButton) { return hasCredits(2500, function () { return controller.server.call(
+	      "USING 'REFIN' SELECT FROM 'PROTESTOS'.'REFINALTERNATIVE'",
+	      controller.call(
+	        'loader::ajax',
+	        controller.call('error::ajax', {
+	          dataType: 'json',
+	          data: {
+	            documento: doc.replace(/[^0-9]/g, ''),
+	          },
+
+	          success: function (data) {
+	            refinButton.remove();
+
+	            var firstCall = true;
+	            var addItem = function (name, value) { return value && result.addItem(name, value); };
+
+	            if (!data.spc.length) {
+	              controller.call('alert', {
+	                icon: 'pass',
+	                title: 'Não há Pefin/Refin Serasa no Target',
+	                subtitle:
+	                      'O sistema encontrou 0 ocorrêmcias de Pefin/Refin para o documento informado.',
+	                paragraph: ("Para o documento " + (cpf_cnpj_1.isValid(doc) ? cpf_cnpj_1.format(doc) : cpf_cnpj_2.format(doc)) + " não foram encontrados registros de Refin/Pefin."),
+	              });
 	            }
 
-	            addItem('Associado', spc.NomeAssociado);
-	            addItem('Valor', ("R$ " + (spc.Valor)));
-	            addItem('Data da Inclusão', spc.DataDeInclusao);
-	            addItem('Data do Vencimento', spc.DataDoVencimento);
-	            addItem('Entidade', spc.Entidade);
-	            addItem('Número do Contrato', spc.NumeroContrato);
-	            addItem('Comprador, Fiador ou Avalista', spc.CompradorFiadorAvalista);
-	            addItem('Telefone Associado', spc.TelefoneAssociado);
-	            addItem('Cidade Associado', spc.CidadeAssociado);
-	            addItem('UF Associado', spc.UfAssociado);
-	          });
+	            data.spc.forEach(function (spc) {
+	              var separatorElement = result
+	                .addSeparator(
+	                  'Restrição no Refin/Pefin',
+	                  'Apontamentos e Restrições Financeiras e Comerciais',
+	                  'Pendências e restrições financeiras nos bureaus de crédito Refin e Pefin'
+	                )
+	                .addClass('error');
+	              if (firstCall) {
+	                $('html, body').animate(
+	                  {
+	                    scrollTop: separatorElement.offset().top,
+	                  },
+	                  2000
+	                );
+	                firstCall = false;
+	              }
 
-	          if (data.consultaRealizada.length) {
-	            result.addSeparator('Consulta Realizada por Associado do Refin e Pefin',
-	              'Consulta Realizada por Associado do Refin/Pefin',
-	              'Um associado do Refin/Pefin consultou este CNPJ/CPF a procura de apontamentos e restrições financeiras e comerciais');
-
-	            data.consultaRealizada.forEach(function (consultaRealizada) {
-	              addItem('Nome Associado', consultaRealizada.NomeAssociado);
-	              addItem('CPF/CNPJ', consultaRealizada.CpfCnpj);
-	              addItem('Data da Consulta', consultaRealizada.DataDaConsulta);
-	              addItem('Cidade Associado', consultaRealizada.CidadeAssociado);
-	              addItem('UF Associado', consultaRealizada.UfAssociado);
+	              addItem('Associado', spc.NomeAssociado);
+	              addItem('Valor', ("R$ " + (spc.Valor)));
+	              addItem('Data da Inclusão', spc.DataDeInclusao);
+	              addItem('Data do Vencimento', spc.DataDoVencimento);
+	              addItem('Entidade', spc.Entidade);
+	              addItem('Número do Contrato', spc.NumeroContrato);
+	              addItem(
+	                'Comprador, Fiador ou Avalista',
+	                spc.CompradorFiadorAvalista
+	              );
+	              addItem('Telefone Associado', spc.TelefoneAssociado);
+	              addItem('Cidade Associado', spc.CidadeAssociado);
+	              addItem('UF Associado', spc.UfAssociado);
 	            });
-	          }
-	        },
-	      }))); }); });
 
-	  controller.registerTrigger('ccbusca::parser', 'imoveis', function (ref, cb) {
-	    var result = ref.result;
-	    var doc = ref.doc;
+	            if (data.consultaRealizada.length) {
+	              result.addSeparator(
+	                'Histórico de Pefin/Refin Serasa',
+	                'Veja o histórico de Pefin/Refin do Target',
+	                'No passado um CPF/CNPJ consultou Pefin/Refin neste Target.'
+	              );
 
-	    if (cpf_cnpj_2.isValid(doc)) { return; }
-	    var imoveisButton = null;
-	    imoveisButton = $('<button />')
-	      .text('Consultar Imóveis')
-	      .addClass('button')
-	      .append($('<small />').text('Apenas São Paulo Capital').css({
-	        display: 'block',
-	        'font-size': '9px',
-	      }));
+	              data.consultaRealizada.forEach(function (consultaRealizada) {
+	                addItem('Nome Associado', consultaRealizada.NomeAssociado);
+	                addItem('CPF/CNPJ', consultaRealizada.CpfCnpj);
+	                addItem(
+	                  'Data da Consulta',
+	                  consultaRealizada.DataDaConsulta
+	                );
+	                addItem(
+	                  'Cidade Associado',
+	                  consultaRealizada.CidadeAssociado
+	                );
+	                addItem('UF Associado', consultaRealizada.UfAssociado);
+	              });
+	            }
+	          },
+	        })
+	      )
+	    ); }); }
+	  );
 
-	    imoveisButton.click(controller.click('icheques::consulta::imoveis', result, doc, imoveisButton));
-	    result.addItem().prepend(imoveisButton);
-	    cb();
-	  });
+	  controller.registerTrigger(
+	    'ccbusca::parser',
+	    'imoveis',
+	    function (ref, cb) {
+	      var result = ref.result;
+	      var doc = ref.doc;
 
-	  controller.registerTrigger('ccbusca::parser', 'refin', function (ref, cb) {
-	    var result = ref.result;
-	    var doc = ref.doc;
+	      if (cpf_cnpj_2.isValid(doc)) { return; }
+	      var imoveisButton = null;
+	      imoveisButton = $('<button />')
+	        .text('Consultar Imóveis SP Capital')
+	        .addClass('button')
+	        .append(
+	          $('<small />')
+	            .text('CPF Somente - R$20')
+	            .css({
+	              display: 'block',
+	              'font-size': '9px',
+	            })
+	        );
 
-	    cb();
-	    var refinButton = null;
-	    refinButton = $('<button />')
-	      .text('Consultar Refin')
-	      .addClass('button');
+	      imoveisButton.click(
+	        controller.click(
+	          'icheques::consulta::imoveis',
+	          result,
+	          doc,
+	          imoveisButton
+	        )
+	      );
+	      result.addItem().prepend(imoveisButton);
+	      cb();
+	    }
+	  );
 
-	    refinButton.click(controller.click('icheques::consulta::refin', result, doc, refinButton));
-	    result.addItem().prepend(refinButton);
-	  });
+	  controller.registerTrigger(
+	    'ccbusca::parser',
+	    'refin',
+	    function (ref, cb) {
+	      var result = ref.result;
+	      var doc = ref.doc;
+
+	      cb();
+	      var refinButton = null;
+	      refinButton = $('<button />')
+	        .text('Consultar Pefin/Refin Serasa')
+	        .addClass('button')
+	        .append(
+	          $('<small />')
+	            .text('CPF/CNPJ - R$2,50')
+	            .css({
+	              display: 'block',
+	              'font-size': '9px',
+	            })
+	        );
+
+	      refinButton.click(
+	        controller.click('icheques::consulta::refin', result, doc, refinButton)
+	      );
+	      result.addItem().prepend(refinButton);
+	    }
+	  );
 	});
 
 }(harlan, $, numeral));
