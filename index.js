@@ -1522,7 +1522,7 @@
 	  controller.registerCall(
 	    'icheques::consulta::refin',
 	    function (result, doc, refinButton) { return hasCredits(2500, function () { return controller.server.call(
-	      "USING 'REFIN' SELECT FROM 'PROTESTOS'.'REFINALTERNATIVE'",
+	      "SELECT FROM 'PROTESTOS'.'SCPCNET",
 	      controller.call(
 	        'loader::ajax',
 	        controller.call('error::ajax', {
@@ -1540,7 +1540,7 @@
 	            if (!data.spc.length) {
 	              controller.call('alert', {
 	                icon: 'pass',
-	                title: 'Não há Pefin/Refin Serasa no Target',
+	                title: 'Não há Pefin/Refin Boa Vista no Target',
 	                subtitle:
 	                      'O sistema encontrou 0 ocorrêmcias de Pefin/Refin para o documento informado.',
 	                paragraph: ("Para o documento " + (cpf_cnpj_1.isValid(doc) ? cpf_cnpj_1.format(doc) : cpf_cnpj_2.format(doc)) + " não foram encontrados registros de Refin/Pefin."),
@@ -1582,7 +1582,7 @@
 
 	            if (data.consultaRealizada.length) {
 	              result.addSeparator(
-	                'Histórico de Pefin/Refin Serasa',
+	                'Histórico de Pefin/Refin Boa Vista',
 	                'Veja o histórico de Pefin/Refin do Target',
 	                'No passado um CPF/CNPJ consultou Pefin/Refin neste Target.'
 	              );
@@ -1651,7 +1651,7 @@
 	      cb();
 	      var refinButton = null;
 	      refinButton = $('<button />')
-	        .text('Consultar Pefin/Refin Serasa')
+	        .text('Consultar Pefin/Refin Boa Vista')
 	        .addClass('button')
 	        .append(
 	          $('<small />')
