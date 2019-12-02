@@ -1522,7 +1522,7 @@
 	  controller.registerCall(
 	    'icheques::consulta::refin',
 	    function (result, doc, refinButton) { return hasCredits(2500, function () { return controller.server.call(
-	      "SELECT FROM 'PROTESTOS'.'SCPCNET",
+	      "USING 'SCPCNET' SELECT FROM 'PROTESTOS'.'SCPCNET'",
 	      controller.call(
 	        'loader::ajax',
 	        controller.call('error::ajax', {
