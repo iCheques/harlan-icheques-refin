@@ -147,7 +147,7 @@ harlan.addPlugin((controller) => {
   controller.registerCall(
     'icheques::consulta::refin',
     (result, doc, refinButton) => hasCredits(2500, () => controller.server.call(
-      "SELECT FROM 'PROTESTOS'.'SCPCNET",
+      "SELECT FROM 'PROTESTOS'.'SCPCNET'",
       controller.call(
         'loader::ajax',
         controller.call('error::ajax', {
