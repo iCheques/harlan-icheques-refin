@@ -146,7 +146,7 @@ harlan.addPlugin((controller) => {
 
   controller.registerCall(
     'icheques::consulta::refin',
-    (result, doc, refinButton) => hasCredits(2500, () => controller.server.call(
+    (result, doc, refinButton) => hasCredits(doc.replace(/[^0-9]/g, '').length > 11 ? 2700 : 1200, () => controller.server.call(
       "USING 'SCPCNET' SELECT FROM 'PROTESTOS'.'SCPCNET'",
       controller.call(
         'loader::ajax',
@@ -276,7 +276,7 @@ harlan.addPlugin((controller) => {
         .addClass('button')
         .append(
           $('<small />')
-            .text('CPF/CNPJ - R$1,20')
+            .text('CPF R$1,20 / CNPJ R$2,70')
             .css({
               display: 'block',
               'font-size': '9px',

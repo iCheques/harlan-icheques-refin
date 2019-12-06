@@ -1521,7 +1521,7 @@
 
 	  controller.registerCall(
 	    'icheques::consulta::refin',
-	    function (result, doc, refinButton) { return hasCredits(2500, function () { return controller.server.call(
+	    function (result, doc, refinButton) { return hasCredits(doc.replace(/[^0-9]/g, '').length > 11 ? 2700 : 1200, function () { return controller.server.call(
 	      "USING 'SCPCNET' SELECT FROM 'PROTESTOS'.'SCPCNET'",
 	      controller.call(
 	        'loader::ajax',
@@ -1655,7 +1655,7 @@
 	        .addClass('button')
 	        .append(
 	          $('<small />')
-	            .text('CPF/CNPJ - R$1,20')
+	            .text('CPF R$1,20 / CNPJ R$2,70')
 	            .css({
 	              display: 'block',
 	              'font-size': '9px',
