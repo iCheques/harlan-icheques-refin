@@ -160,7 +160,7 @@ harlan.addPlugin((controller) => {
             refinButton.remove();
 
             let firstCall = true;
-            const addItem = (name, value) => value && result.addItem(name, value);
+            const addItem = (name, value, after) => value && result.addItem(name, value, undefined, after);
 
             if (!data.spc.length) {
               controller.call('alert', {
@@ -209,23 +209,20 @@ harlan.addPlugin((controller) => {
 
             if (data.consultaRealizada.length) {
               result.addSeparator(
-                'Histórico de Pefin/Refin Boa Vista',
+                'Quem consultou este CPF/CNPJ?',
                 'Veja o histórico de Pefin/Refin do Target',
                 'No passado um CPF/CNPJ consultou Pefin/Refin neste Target.',
               );
 
               data.consultaRealizada.forEach((consultaRealizada) => {
                 addItem('Nome Associado', consultaRealizada.NomeAssociado);
-                addItem('CPF/CNPJ', consultaRealizada.CpfCnpj);
+                // addItem('CPF/CNPJ', consultaRealizada.CpfCnpj);
                 addItem(
                   'Data da Consulta',
-                  consultaRealizada.DataDaConsulta,
+                  consultaRealizada.DataDaConsulta, true,
                 );
-                addItem(
-                  'Cidade Associado',
-                  consultaRealizada.CidadeAssociado,
-                );
-                addItem('UF Associado', consultaRealizada.UfAssociado);
+                // addItem('Cidade Associado', consultaRealizada.CidadeAssociado,);
+                // addItem('UF Associado', consultaRealizada.UfAssociado);
               });
             }
           },

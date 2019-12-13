@@ -1,4 +1,4 @@
-# harlan-icheques-refin@1.0.17
+# harlan-icheques-refin@1.0.19
 
 Extensão que habilita o consumo de REFIN na iCheques.
 

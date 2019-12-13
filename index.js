@@ -1535,7 +1535,7 @@
 	            refinButton.remove();
 
 	            var firstCall = true;
-	            var addItem = function (name, value) { return value && result.addItem(name, value); };
+	            var addItem = function (name, value, after) { return value && result.addItem(name, value, undefined, after); };
 
 	            if (!data.spc.length) {
 	              controller.call('alert', {
@@ -1582,23 +1582,20 @@
 
 	            if (data.consultaRealizada.length) {
 	              result.addSeparator(
-	                'Histórico de Pefin/Refin Boa Vista',
+	                'Quem consultou este CPF/CNPJ?',
 	                'Veja o histórico de Pefin/Refin do Target',
 	                'No passado um CPF/CNPJ consultou Pefin/Refin neste Target.'
 	              );
 
 	              data.consultaRealizada.forEach(function (consultaRealizada) {
 	                addItem('Nome Associado', consultaRealizada.NomeAssociado);
-	                addItem('CPF/CNPJ', consultaRealizada.CpfCnpj);
+	                // addItem('CPF/CNPJ', consultaRealizada.CpfCnpj);
 	                addItem(
 	                  'Data da Consulta',
-	                  consultaRealizada.DataDaConsulta
+	                  consultaRealizada.DataDaConsulta, true
 	                );
-	                addItem(
-	                  'Cidade Associado',
-	                  consultaRealizada.CidadeAssociado
-	                );
-	                addItem('UF Associado', consultaRealizada.UfAssociado);
+	                // addItem('Cidade Associado', consultaRealizada.CidadeAssociado,);
+	                // addItem('UF Associado', consultaRealizada.UfAssociado);
 	              });
 	            }
 	          },
