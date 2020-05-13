@@ -1198,24 +1198,6 @@
 
 	var get_1 = get;
 
-	var serasaFields = {
-	    "ocorrencia": "Tipo de Ocorrência",
-	    "entrada": "Data de Entrada",
-	    "vencimento": "Data de Vencimento",
-	    "valor": "Valor",
-	    "informante": "Informante",
-	    "contrato": "Número de Contrato",
-	    "avalista": "Avalista",
-	    "cidade": "Cidade",
-	    "uf": "UF",
-	    "situacao": "Situação",
-	    "orgaoemissor": "Orgão Emissor",
-	    "totalpendencias": "Total de Pendências",
-	    "totalcredores": "Total de Credores",
-	    "totalvalor": "Valor Total",
-	    "categoria": "Categoria"
-	};
-
 	var cpf = createCommonjsModule(function (module, exports) {
 	(function(commonjs){
 	  // Blacklist common values.
@@ -1399,33 +1381,51 @@
 	var cpf_cnpj_1 = cpf_cnpj.CPF;
 	var cpf_cnpj_2 = cpf_cnpj.CNPJ;
 
+	var serasaFields = {
+	  ocorrencia: 'Tipo de Ocorrência',
+	  entrada: 'Data de Entrada',
+	  vencimento: 'Data de Vencimento',
+	  valor: 'Valor',
+	  informante: 'Informante',
+	  contrato: 'Número de Contrato',
+	  avalista: 'Avalista',
+	  cidade: 'Cidade',
+	  uf: 'UF',
+	  situacao: 'Situação',
+	  orgaoemissor: 'Orgão Emissor',
+	  totalpendencias: 'Total de Pendências',
+	  totalcredores: 'Total de Credores',
+	  totalvalor: 'Valor Total',
+	  categoria: 'Categoria',
+	};
+
 	var FieldsCreator = function FieldsCreator() {
-	    this.content = $('<div>').addClass('content');
-	    this.container = $('<div>').addClass('container').append(this.content);
+	  this.content = $('<div>').addClass('content');
+	  this.container = $('<div>').addClass('container').append(this.content);
 	};
 
 	FieldsCreator.prototype.addItem = function addItem (name, value) {
-	    var field = $('<div>').addClass('field');
-	        
-	    var $name = $('<div>').addClass('name').css({
-	        fontSize: '10px',
-	        fontWeight: 'bold'
-	    });
+	  var field = $('<div>').addClass('field');
 
-	    var $value = $('<div>').addClass('value');
+	  var $name = $('<div>').addClass('name').css({
+	    fontSize: '10px',
+	    fontWeight: 'bold',
+	  });
 
-	    field.append($name.text(name), $value.text(value));
+	  var $value = $('<div>').addClass('value');
 
-	    this.content.append(field);
+	  field.append($name.text(name), $value.text(value));
+
+	  this.content.append(field);
 	};
 
 	FieldsCreator.prototype.element = function element () {
-	    return this.container;
+	  return this.container;
 	};
 
 	FieldsCreator.prototype.resetFields = function resetFields () {
-	    this.content = $('<div>').addClass('content');
-	    this.container = $('<div>').addClass('container').append(this.content);
+	  this.content = $('<div>').addClass('content');
+	  this.container = $('<div>').addClass('container').append(this.content);
 	};
 
 	harlan.addPlugin(function (controller) {
@@ -1503,14 +1503,14 @@
 	            imoveisButton.remove();
 
 	            if (iptus.length === 0) {
-	              /*controller.call('alert', {
+	              /* controller.call('alert', {
 	                title: 'Não foram encontrados registros de IPTU',
 	                subtitle:
 	                      'O sistema não encontrou nenhum registro de IPTU para o documento informado.',
 	                paragraph: `Para o documento ${
 	                  CPF.isValid(doc) ? CPF.format(doc) : CNPJ.format(doc)
 	                } não foram encontrados registros de IPTU.`,
-	              });*/
+	              }); */
 	              var separatorElement$1 = result
 	                .addSeparator(
 	                  'Não foram encontrados registros de IPTU',
@@ -1551,9 +1551,9 @@
 	                ); */
 	                // addItem('Situação', iptu.Situacao);
 	                // addItem('Setor', iptu.Setor);
-	                iptu.COMPLEMENTO.CONJUNTO.length > 0 ? addItem('Conjunto', iptu.COMPLEMENTO.CONJUNTO) : "";
-	                iptu.COMPLEMENTO.QUADRA.length > 0 ? addItem('Quadra', iptu.COMPLEMENTO.QUADRA) : "";
-	                iptu.COMPLEMENTO.LOTE.length > 0 ? addItem('Lote', iptu.COMPLEMENTO.LOTE) : "";
+	                iptu.COMPLEMENTO.CONJUNTO.length > 0 ? addItem('Conjunto', iptu.COMPLEMENTO.CONJUNTO) : '';
+	                iptu.COMPLEMENTO.QUADRA.length > 0 ? addItem('Quadra', iptu.COMPLEMENTO.QUADRA) : '';
+	                iptu.COMPLEMENTO.LOTE.length > 0 ? addItem('Lote', iptu.COMPLEMENTO.LOTE) : '';
 	                addItem('Endereço', iptu.ENDERECO);
 	                addItem('Número', iptu.NUMERO);
 	                addItem('Bairro', iptu.BAIRRO);
@@ -1561,9 +1561,9 @@
 	                // addItem('Código', iptu.CodLog);
 	                addItem(
 	                  'Área do Terreno',
-	                  iptu.AREA.TOTAL ?
-	                    ((numeral(iptu.AREA.TOTAL).format()) + " m²") :
-	                    null
+	                  iptu.AREA.TOTAL
+	                    ? ((numeral(iptu.AREA.TOTAL).format()) + " m²")
+	                    : null
 	                );
 	                /* addItem(
 	                  'Área do Testada',
@@ -1572,33 +1572,33 @@
 	                // addItem('Fração Ideal', iptu.FracaoIdeal);
 	                addItem(
 	                  'Área Construída',
-	                  iptu.AREA.CONSTRUIDA ?
-	                    ((numeral(iptu.AREA.CONSTRUIDA).format()) + " m²") :
-	                    null
+	                  iptu.AREA.CONSTRUIDA
+	                    ? ((numeral(iptu.AREA.CONSTRUIDA).format()) + " m²")
+	                    : null
 	                );
 	                addItem(
 	                  'Ano de Construção',
-	                  iptu.ANO ?
-	                    numeral(iptu.ANO).format() :
-	                    null
+	                  iptu.ANO
+	                    ? numeral(iptu.ANO).format()
+	                    : null
 	                );
 	                addItem(
 	                  'Base de Cálculo do IPTU',
-	                  iptu.ANO ?
-	                    numeral(iptu.ANO).format('$0,0.00') :
-	                    null
+	                  iptu.ANO
+	                    ? numeral(iptu.ANO).format('$0,0.00')
+	                    : null
 	                );
 	                addItem(
 	                  'Valor do IPTU',
-	                  iptu.VALOR.IPTU ?
-	                    numeral(iptu.VALOR.IPTU).format('$0,0.00') :
-	                    null
+	                  iptu.VALOR.IPTU
+	                    ? numeral(iptu.VALOR.IPTU).format('$0,0.00')
+	                    : null
 	                );
 	                addItem(
 	                  'Valor do IMÓVEL',
-	                  iptu.VALOR.IPTU ?
-	                    numeral(iptu.VALOR.CONSTRUCAO).format('$0,0.00') :
-	                    null
+	                  iptu.VALOR.IPTU
+	                    ? numeral(iptu.VALOR.CONSTRUCAO).format('$0,0.00')
+	                    : null
 	                );
 	                /* addItem(
 	                  'Data de Consulta do Cadastro',
@@ -1764,7 +1764,7 @@
 	          var data = JSON.parse(dataRes);
 
 	          console.log(data);
-	          
+
 	          var formatter = (new Intl.NumberFormat('pt-BR', {
 	            style: 'currency',
 	            currency: 'BRL',
@@ -1774,7 +1774,7 @@
 
 	          var fieldsCreator = new FieldsCreator();
 	          var addItem = function (name, value) { return value && fieldsCreator.addItem(name, value); };
-	          
+
 	          var firstCall = true;
 
 	          if (!data.length) {
@@ -1791,7 +1791,7 @@
 	              2000);
 	              firstCall = false;
 	            }
-	            
+
 	            addItem('Informação', ("Para o documento " + (cpf_cnpj_1.isValid(doc) ? cpf_cnpj_1.format(doc) : cpf_cnpj_2.format(doc)) + " não foram encontrados registros de restrições."));
 	            result.element().append(fieldsCreator.element());
 	            controller.call('alert', {
@@ -1801,19 +1801,18 @@
 	              paragraph: ("Para o documento " + (cpf_cnpj_1.isValid(doc) ? cpf_cnpj_1.format(doc) : cpf_cnpj_2.format(doc)) + " não foram encontrados registros de restrições."),
 	            });
 	          } else {
-
 	            data.forEach(function (ocorrencia) {
-	              ocorrencia['valor'] = formatter.format(ocorrencia.valor);
-	              ocorrencia['totalvalor'] = formatter.format(ocorrencia.totalvalor);
+	              ocorrencia.valor = formatter.format(ocorrencia.valor);
+	              ocorrencia.totalvalor = formatter.format(ocorrencia.totalvalor);
 	            });
-	            
+
 	            var separatorElement$1 = result.addSeparator(
 	              'Restrição Serasa',
 	              'Apontamentos e Restrições Financeiras e Comerciais',
 	              'Pendências e restrições financeiras no Serasa'
 	            ).addClass('error');
 
-	            data.forEach(function (ocorrencia) {              
+	            data.forEach(function (ocorrencia) {
 	              if (firstCall) {
 	                $$1('html, body').animate({
 	                  scrollTop: separatorElement$1.offset().top,
@@ -1826,12 +1825,9 @@
 
 	              result.element().append(fieldsCreator.element().append($$1('<hr>')));
 	              fieldsCreator.resetFields();
-	              
 	            });
 	          }
-
-	          
-	        }
+	        },
 	      })
 	    )
 	  ); }); });
@@ -1941,14 +1937,14 @@
 	        .addClass('button')
 	        .append(
 	          $$1('<small />')
-	            .text('R$ 3,70')
+	            .text('CPF/CNPJ - R$ 3,70')
 	            .css({
 	              display: 'block',
 	              'font-size': '9px',
 	            })
 	        );
 
-	        serasaButton.click(
+	      serasaButton.click(
 	        controller.click('icheques::consulta::serasa', result, doc, serasaButton)
 	      );
 	      result.addItem().prepend(serasaButton);
