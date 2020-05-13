@@ -1,9 +1,9 @@
-(function (harlan, $, numeral) {
+(function (harlan, $$1, numeral) {
 	'use strict';
 
-	harlan = harlan && harlan.hasOwnProperty('default') ? harlan['default'] : harlan;
-	$ = $ && $.hasOwnProperty('default') ? $['default'] : $;
-	numeral = numeral && numeral.hasOwnProperty('default') ? numeral['default'] : numeral;
+	harlan = harlan && Object.prototype.hasOwnProperty.call(harlan, 'default') ? harlan['default'] : harlan;
+	$$1 = $$1 && Object.prototype.hasOwnProperty.call($$1, 'default') ? $$1['default'] : $$1;
+	numeral = numeral && Object.prototype.hasOwnProperty.call(numeral, 'default') ? numeral['default'] : numeral;
 
 	/**
 	 * Checks if `value` is classified as an `Array` object.
@@ -1198,6 +1198,24 @@
 
 	var get_1 = get;
 
+	var serasaFields = {
+	    "ocorrencia": "Tipo de Ocorrência",
+	    "entrada": "Data de Entrada",
+	    "vencimento": "Data de Vencimento",
+	    "valor": "Valor",
+	    "informante": "Informante",
+	    "contrato": "Número de Contrato",
+	    "avalista": "Avalista",
+	    "cidade": "Cidade",
+	    "uf": "UF",
+	    "situacao": "Situação",
+	    "orgaoemissor": "Orgão Emissor",
+	    "totalpendencias": "Total de Pendências",
+	    "totalcredores": "Total de Credores",
+	    "totalvalor": "Valor Total",
+	    "categoria": "Categoria"
+	};
+
 	var cpf = createCommonjsModule(function (module, exports) {
 	(function(commonjs){
 	  // Blacklist common values.
@@ -1381,6 +1399,35 @@
 	var cpf_cnpj_1 = cpf_cnpj.CPF;
 	var cpf_cnpj_2 = cpf_cnpj.CNPJ;
 
+	var FieldsCreator = function FieldsCreator() {
+	    this.content = $('<div>').addClass('content');
+	    this.container = $('<div>').addClass('container').append(this.content);
+	};
+
+	FieldsCreator.prototype.addItem = function addItem (name, value) {
+	    var field = $('<div>').addClass('field');
+	        
+	    var $name = $('<div>').addClass('name').css({
+	        fontSize: '10px',
+	        fontWeight: 'bold'
+	    });
+
+	    var $value = $('<div>').addClass('value');
+
+	    field.append($name.text(name), $value.text(value));
+
+	    this.content.append(field);
+	};
+
+	FieldsCreator.prototype.element = function element () {
+	    return this.container;
+	};
+
+	FieldsCreator.prototype.resetFields = function resetFields () {
+	    this.content = $('<div>').addClass('content');
+	    this.container = $('<div>').addClass('container').append(this.content);
+	};
+
 	harlan.addPlugin(function (controller) {
 	  var hasCredits = function (c, b) { return controller.server.call(
 	    "SELECT FROM 'ICHEQUES'.'IPAYTHEBILL'",
@@ -1426,7 +1473,7 @@
 	                )
 	                .addClass('error');
 	              if (firstCall) {
-	                $('html, body').animate({
+	                $$1('html, body').animate({
 	                  scrollTop: separatorElement.offset().top,
 	                },
 	                2000);
@@ -1472,7 +1519,7 @@
 	                )
 	                .addClass('error');
 	              if (firstCall) {
-	                $('html, body').animate({
+	                $$1('html, body').animate({
 	                  scrollTop: separatorElement$1.offset().top,
 	                },
 	                2000);
@@ -1488,7 +1535,7 @@
 	                  )
 	                  .addClass('error');
 	                if (firstCall) {
-	                  $('html, body').animate({
+	                  $$1('html, body').animate({
 	                    scrollTop: separatorElement.offset().top,
 	                  },
 	                  2000);
@@ -1588,7 +1635,7 @@
 	            )
 	            .addClass('error');
 	          if (firstCall) {
-	            $('html, body').animate({
+	            $$1('html, body').animate({
 	              scrollTop: separatorElement.offset().top,
 	            },
 	            2000);
@@ -1657,7 +1704,7 @@
 	                  )
 	                  .addClass('error');
 	                if (firstCall) {
-	                  $('html, body').animate({
+	                  $$1('html, body').animate({
 	                    scrollTop: separatorElement.offset().top,
 	                  },
 	                  2000);
@@ -1704,6 +1751,91 @@
 	    }
 	  );
 
+	  controller.registerCall('icheques::consulta::serasa', function (result, doc, serasaButton) { return hasCredits(3700, function () { return controller.serverCommunication.call(
+	    'SELECT FROM \'PROTESTOS\'.\'SERASA\'',
+	    controller.call(
+	      'loader::ajax',
+	      controller.call('error::ajax', {
+	        dataType: 'json',
+	        data: {
+	          documento: doc.replace(/[^0-9]/g, ''),
+	        },
+	        success: function (dataRes) {
+	          var data = JSON.parse(dataRes);
+
+	          console.log(data);
+	          
+	          var formatter = (new Intl.NumberFormat('pt-BR', {
+	            style: 'currency',
+	            currency: 'BRL',
+	          }));
+
+	          serasaButton.remove();
+
+	          var fieldsCreator = new FieldsCreator();
+	          var addItem = function (name, value) { return value && fieldsCreator.addItem(name, value); };
+	          
+	          var firstCall = true;
+
+	          if (!data.length) {
+	            var separatorElement = result.addSeparator(
+	              'Restrição Serasa',
+	              'Apontamentos e Restrições Financeiras e Comerciais',
+	              'Pendências e restrições financeiras no Serasa'
+	            ).addClass('error');
+
+	            if (firstCall) {
+	              $$1('html, body').animate({
+	                scrollTop: separatorElement.offset().top,
+	              },
+	              2000);
+	              firstCall = false;
+	            }
+	            
+	            addItem('Informação', ("Para o documento " + (cpf_cnpj_1.isValid(doc) ? cpf_cnpj_1.format(doc) : cpf_cnpj_2.format(doc)) + " não foram encontrados registros de restrições."));
+	            result.element().append(fieldsCreator.element());
+	            controller.call('alert', {
+	              icon: 'pass',
+	              title: 'Não há Restrições Serasa no Target',
+	              subtitle: 'O sistema encontrou 0 ocorrências de Restrições Serasa para o documento informado.',
+	              paragraph: ("Para o documento " + (cpf_cnpj_1.isValid(doc) ? cpf_cnpj_1.format(doc) : cpf_cnpj_2.format(doc)) + " não foram encontrados registros de restrições."),
+	            });
+	          } else {
+
+	            data.forEach(function (ocorrencia) {
+	              ocorrencia['valor'] = formatter.format(ocorrencia.valor);
+	              ocorrencia['totalvalor'] = formatter.format(ocorrencia.totalvalor);
+	            });
+	            
+	            var separatorElement$1 = result.addSeparator(
+	              'Restrição Serasa',
+	              'Apontamentos e Restrições Financeiras e Comerciais',
+	              'Pendências e restrições financeiras no Serasa'
+	            ).addClass('error');
+
+	            data.forEach(function (ocorrencia) {              
+	              if (firstCall) {
+	                $$1('html, body').animate({
+	                  scrollTop: separatorElement$1.offset().top,
+	                },
+	                2000);
+	                firstCall = false;
+	              }
+
+	              Object.keys(ocorrencia).forEach(function (field) { return addItem(serasaFields[field], ocorrencia[field] || 'Não Informado'); });
+
+	              result.element().append(fieldsCreator.element().append($$1('<hr>')));
+	              fieldsCreator.resetFields();
+	              
+	            });
+	          }
+
+	          
+	        }
+	      })
+	    )
+	  ); }); });
+
 	  controller.registerTrigger(
 	    'ccbusca::parser',
 	    'imoveis',
@@ -1713,11 +1845,11 @@
 
 	      if (cpf_cnpj_2.isValid(doc)) { return; }
 	      var imoveisButton = null;
-	      imoveisButton = $('<button />')
+	      imoveisButton = $$1('<button />')
 	        .text('Consultar Imóveis SP Capital')
 	        .addClass('button')
 	        .append(
-	          $('<small />')
+	          $$1('<small />')
 	            .text('CPF Somente - R$20')
 	            .css({
 	              display: 'block',
@@ -1747,11 +1879,11 @@
 
 	      cb();
 	      var refinButton = null;
-	      refinButton = $('<button />')
+	      refinButton = $$1('<button />')
 	        .text('Consultar Pefin/Refin Boa Vista')
 	        .addClass('button')
 	        .append(
-	          $('<small />')
+	          $$1('<small />')
 	            .text('CPF R$1,20 / CNPJ R$2,70')
 	            .css({
 	              display: 'block',
@@ -1776,11 +1908,11 @@
 	      if (cpf_cnpj_2.isValid(doc)) { return; }
 	      cb();
 	      var scoreButton = null;
-	      scoreButton = $('<button />')
+	      scoreButton = $$1('<button />')
 	        .text('Consultar Score Boa Vista')
 	        .addClass('button')
 	        .append(
-	          $('<small />')
+	          $$1('<small />')
 	            .text('CPF Somente - R$ 3,00')
 	            .css({
 	              display: 'block',
@@ -1792,6 +1924,34 @@
 	        controller.click('icheques::consulta::score', result, doc, scoreButton)
 	      );
 	      result.addItem().prepend(scoreButton);
+	    }
+	  );
+
+	  controller.registerTrigger(
+	    'ccbusca::parser',
+	    'serasa',
+	    function (ref, cb) {
+	      var result = ref.result;
+	      var doc = ref.doc;
+
+	      cb();
+	      var serasaButton = null;
+	      serasaButton = $$1('<button />')
+	        .text('Consultar Pefin/Refin Serasa')
+	        .addClass('button')
+	        .append(
+	          $$1('<small />')
+	            .text('R$ 3,70')
+	            .css({
+	              display: 'block',
+	              'font-size': '9px',
+	            })
+	        );
+
+	        serasaButton.click(
+	        controller.click('icheques::consulta::serasa', result, doc, serasaButton)
+	      );
+	      result.addItem().prepend(serasaButton);
 	    }
 	  );
 	});

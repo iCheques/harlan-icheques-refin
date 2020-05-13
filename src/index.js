@@ -2,10 +2,12 @@ import harlan from 'harlan';
 import $ from 'jquery';
 import get from 'lodash/get';
 import numeral from 'numeral';
+import serasaFields from './fields-serasa'
 import {
   CPF,
   CNPJ,
 } from 'cpf_cnpj';
+import FieldsCreator from './fields-creator';
 
 harlan.addPlugin((controller) => {
   const hasCredits = (c, b) => controller.server.call(
@@ -334,6 +336,93 @@ harlan.addPlugin((controller) => {
     },
   );
 
+  controller.registerCall('icheques::consulta::serasa', (result, doc, serasaButton) => hasCredits(3700, () => controller.serverCommunication.call(
+    'SELECT FROM \'PROTESTOS\'.\'SERASA\'',
+    controller.call(
+      'loader::ajax',
+      controller.call('error::ajax', {
+        dataType: 'json',
+        data: {
+          documento: doc.replace(/[^0-9]/g, ''),
+        },
+        success: (dataRes) => {
+          let data = JSON.parse(dataRes);
+
+          console.log(data);
+          
+          const formatter = (new Intl.NumberFormat('pt-BR', {
+            style: 'currency',
+            currency: 'BRL',
+          }))
+
+          serasaButton.remove();
+
+          const fieldsCreator = new FieldsCreator();
+          const addItem = (name, value) => value && fieldsCreator.addItem(name, value);
+          
+          let firstCall = true;
+
+          if (!data.length) {
+            const separatorElement = result.addSeparator(
+              'Restrição Serasa',
+              'Apontamentos e Restrições Financeiras e Comerciais',
+              'Pendências e restrições financeiras no Serasa'
+            ).addClass('error');
+
+            if (firstCall) {
+              $('html, body').animate({
+                scrollTop: separatorElement.offset().top,
+              },
+              2000);
+              firstCall = false;
+            }
+            
+            addItem('Informação', `Para o documento ${CPF.isValid(doc) ? CPF.format(doc) : CNPJ.format(doc)} não foram encontrados registros de restrições.`)
+            result.element().append(fieldsCreator.element());
+            controller.call('alert', {
+              icon: 'pass',
+              title: 'Não há Restrições Serasa no Target',
+              subtitle: 'O sistema encontrou 0 ocorrências de Restrições Serasa para o documento informado.',
+              paragraph: `Para o documento ${
+                CPF.isValid(doc) ? CPF.format(doc) : CNPJ.format(doc)
+              } não foram encontrados registros de restrições.`,
+            });
+          } else {
+
+            data.forEach(ocorrencia => {
+              ocorrencia['valor'] = formatter.format(ocorrencia.valor);
+              ocorrencia['totalvalor'] = formatter.format(ocorrencia.totalvalor);
+            });
+            
+            const separatorElement = result.addSeparator(
+              'Restrição Serasa',
+              'Apontamentos e Restrições Financeiras e Comerciais',
+              'Pendências e restrições financeiras no Serasa'
+            ).addClass('error');
+
+            data.forEach(ocorrencia => {              
+              if (firstCall) {
+                $('html, body').animate({
+                  scrollTop: separatorElement.offset().top,
+                },
+                2000);
+                firstCall = false;
+              }
+
+              Object.keys(ocorrencia).forEach(field => addItem(serasaFields[field], ocorrencia[field] || 'Não Informado'))
+
+              result.element().append(fieldsCreator.element().append($('<hr>')))
+              fieldsCreator.resetFields();
+              
+            })
+          }
+
+          
+        }
+      }),
+    ),
+  )));
+
   controller.registerTrigger(
     'ccbusca::parser',
     'imoveis',
@@ -422,6 +511,34 @@ harlan.addPlugin((controller) => {
         controller.click('icheques::consulta::score', result, doc, scoreButton),
       );
       result.addItem().prepend(scoreButton);
+    },
+  );
+
+  controller.registerTrigger(
+    'ccbusca::parser',
+    'serasa',
+    ({
+      result,
+      doc,
+    }, cb) => {
+      cb();
+      let serasaButton = null;
+      serasaButton = $('<button />')
+        .text('Consultar Pefin/Refin Serasa')
+        .addClass('button')
+        .append(
+          $('<small />')
+            .text('R$ 3,70')
+            .css({
+              display: 'block',
+              'font-size': '9px',
+            }),
+        );
+
+        serasaButton.click(
+        controller.click('icheques::consulta::serasa', result, doc, serasaButton),
+      );
+      result.addItem().prepend(serasaButton);
     },
   );
 });
