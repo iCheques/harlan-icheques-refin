@@ -1,30 +1,30 @@
 export default class FieldsCreator {
-    constructor() {
-        this.content = $('<div>').addClass('content');
-        this.container = $('<div>').addClass('container').append(this.content);
-    }
+  constructor() {
+    this.content = $('<div>').addClass('content');
+    this.container = $('<div>').addClass('container').append(this.content);
+  }
 
-    addItem(name, value) {
-        const field = $('<div>').addClass('field');
-        
-        const $name = $('<div>').addClass('name').css({
-            fontSize: '10px',
-            fontWeight: 'bold'
-        });
+  addItem(name, value) {
+    const field = $('<div>').addClass('field');
 
-        const $value = $('<div>').addClass('value');
+    const $name = $('<div>').addClass('name').css({
+      fontSize: '10px',
+      fontWeight: 'bold',
+    });
 
-        field.append($name.text(name), $value.text(value));
+    const $value = $('<div>').addClass('value');
 
-        this.content.append(field);
-    }
+    field.append($name.text(name), $value.text(value));
 
-    element() {
-        return this.container;
-    }
+    this.content.append(field);
+  }
 
-    resetFields() {
-        this.content = $('<div>').addClass('content');
-        this.container = $('<div>').addClass('container').append(this.content);
-    }
+  element() {
+    return this.container;
+  }
+
+  resetFields() {
+    this.content = $('<div>').addClass('content');
+    this.container = $('<div>').addClass('container').append(this.content);
+  }
 }

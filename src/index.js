@@ -2,11 +2,11 @@ import harlan from 'harlan';
 import $ from 'jquery';
 import get from 'lodash/get';
 import numeral from 'numeral';
-import serasaFields from './fields-serasa'
 import {
   CPF,
   CNPJ,
 } from 'cpf_cnpj';
+import serasaFields from './fields-serasa';
 import FieldsCreator from './fields-creator';
 
 harlan.addPlugin((controller) => {
@@ -86,14 +86,14 @@ harlan.addPlugin((controller) => {
             imoveisButton.remove();
 
             if (iptus.length === 0) {
-              /*controller.call('alert', {
+              /* controller.call('alert', {
                 title: 'Não foram encontrados registros de IPTU',
                 subtitle:
                       'O sistema não encontrou nenhum registro de IPTU para o documento informado.',
                 paragraph: `Para o documento ${
                   CPF.isValid(doc) ? CPF.format(doc) : CNPJ.format(doc)
                 } não foram encontrados registros de IPTU.`,
-              });*/
+              }); */
               const separatorElement = result
                 .addSeparator(
                   'Não foram encontrados registros de IPTU',
@@ -136,9 +136,9 @@ harlan.addPlugin((controller) => {
                 ); */
                 // addItem('Situação', iptu.Situacao);
                 // addItem('Setor', iptu.Setor);
-                iptu.COMPLEMENTO.CONJUNTO.length > 0 ? addItem('Conjunto', iptu.COMPLEMENTO.CONJUNTO) : "";
-                iptu.COMPLEMENTO.QUADRA.length > 0 ? addItem('Quadra', iptu.COMPLEMENTO.QUADRA) : "";
-                iptu.COMPLEMENTO.LOTE.length > 0 ? addItem('Lote', iptu.COMPLEMENTO.LOTE) : "";
+                iptu.COMPLEMENTO.CONJUNTO.length > 0 ? addItem('Conjunto', iptu.COMPLEMENTO.CONJUNTO) : '';
+                iptu.COMPLEMENTO.QUADRA.length > 0 ? addItem('Quadra', iptu.COMPLEMENTO.QUADRA) : '';
+                iptu.COMPLEMENTO.LOTE.length > 0 ? addItem('Lote', iptu.COMPLEMENTO.LOTE) : '';
                 addItem('Endereço', iptu.ENDERECO);
                 addItem('Número', iptu.NUMERO);
                 addItem('Bairro', iptu.BAIRRO);
@@ -146,9 +146,9 @@ harlan.addPlugin((controller) => {
                 // addItem('Código', iptu.CodLog);
                 addItem(
                   'Área do Terreno',
-                  iptu.AREA.TOTAL ?
-                    `${numeral(iptu.AREA.TOTAL).format()} m²` :
-                    null,
+                  iptu.AREA.TOTAL
+                    ? `${numeral(iptu.AREA.TOTAL).format()} m²`
+                    : null,
                 );
                 /* addItem(
                   'Área do Testada',
@@ -157,33 +157,33 @@ harlan.addPlugin((controller) => {
                 // addItem('Fração Ideal', iptu.FracaoIdeal);
                 addItem(
                   'Área Construída',
-                  iptu.AREA.CONSTRUIDA ?
-                    `${numeral(iptu.AREA.CONSTRUIDA).format()} m²` :
-                    null,
+                  iptu.AREA.CONSTRUIDA
+                    ? `${numeral(iptu.AREA.CONSTRUIDA).format()} m²`
+                    : null,
                 );
                 addItem(
                   'Ano de Construção',
-                  iptu.ANO ?
-                    numeral(iptu.ANO).format() :
-                    null,
+                  iptu.ANO
+                    ? numeral(iptu.ANO).format()
+                    : null,
                 );
                 addItem(
                   'Base de Cálculo do IPTU',
-                  iptu.ANO ?
-                    numeral(iptu.ANO).format('$0,0.00') :
-                    null,
+                  iptu.ANO
+                    ? numeral(iptu.ANO).format('$0,0.00')
+                    : null,
                 );
                 addItem(
                   'Valor do IPTU',
-                  iptu.VALOR.IPTU ?
-                    numeral(iptu.VALOR.IPTU).format('$0,0.00') :
-                    null,
+                  iptu.VALOR.IPTU
+                    ? numeral(iptu.VALOR.IPTU).format('$0,0.00')
+                    : null,
                 );
                 addItem(
                   'Valor do IMÓVEL',
-                  iptu.VALOR.IPTU ?
-                    numeral(iptu.VALOR.CONSTRUCAO).format('$0,0.00') :
-                    null,
+                  iptu.VALOR.IPTU
+                    ? numeral(iptu.VALOR.CONSTRUCAO).format('$0,0.00')
+                    : null,
                 );
                 /* addItem(
                   'Data de Consulta do Cadastro',
@@ -346,27 +346,27 @@ harlan.addPlugin((controller) => {
           documento: doc.replace(/[^0-9]/g, ''),
         },
         success: (dataRes) => {
-          let data = JSON.parse(dataRes);
+          const data = JSON.parse(dataRes);
 
           console.log(data);
-          
+
           const formatter = (new Intl.NumberFormat('pt-BR', {
             style: 'currency',
             currency: 'BRL',
-          }))
+          }));
 
           serasaButton.remove();
 
           const fieldsCreator = new FieldsCreator();
           const addItem = (name, value) => value && fieldsCreator.addItem(name, value);
-          
+
           let firstCall = true;
 
           if (!data.length) {
             const separatorElement = result.addSeparator(
               'Restrição Serasa',
               'Apontamentos e Restrições Financeiras e Comerciais',
-              'Pendências e restrições financeiras no Serasa'
+              'Pendências e restrições financeiras no Serasa',
             ).addClass('error');
 
             if (firstCall) {
@@ -376,8 +376,8 @@ harlan.addPlugin((controller) => {
               2000);
               firstCall = false;
             }
-            
-            addItem('Informação', `Para o documento ${CPF.isValid(doc) ? CPF.format(doc) : CNPJ.format(doc)} não foram encontrados registros de restrições.`)
+
+            addItem('Informação', `Para o documento ${CPF.isValid(doc) ? CPF.format(doc) : CNPJ.format(doc)} não foram encontrados registros de restrições.`);
             result.element().append(fieldsCreator.element());
             controller.call('alert', {
               icon: 'pass',
@@ -388,19 +388,18 @@ harlan.addPlugin((controller) => {
               } não foram encontrados registros de restrições.`,
             });
           } else {
-
-            data.forEach(ocorrencia => {
-              ocorrencia['valor'] = formatter.format(ocorrencia.valor);
-              ocorrencia['totalvalor'] = formatter.format(ocorrencia.totalvalor);
+            data.forEach((ocorrencia) => {
+              ocorrencia.valor = formatter.format(ocorrencia.valor);
+              ocorrencia.totalvalor = formatter.format(ocorrencia.totalvalor);
             });
-            
+
             const separatorElement = result.addSeparator(
               'Restrição Serasa',
               'Apontamentos e Restrições Financeiras e Comerciais',
-              'Pendências e restrições financeiras no Serasa'
+              'Pendências e restrições financeiras no Serasa',
             ).addClass('error');
 
-            data.forEach(ocorrencia => {              
+            data.forEach((ocorrencia) => {
               if (firstCall) {
                 $('html, body').animate({
                   scrollTop: separatorElement.offset().top,
@@ -409,16 +408,13 @@ harlan.addPlugin((controller) => {
                 firstCall = false;
               }
 
-              Object.keys(ocorrencia).forEach(field => addItem(serasaFields[field], ocorrencia[field] || 'Não Informado'))
+              Object.keys(ocorrencia).forEach((field) => addItem(serasaFields[field], ocorrencia[field] || 'Não Informado'));
 
-              result.element().append(fieldsCreator.element().append($('<hr>')))
+              result.element().append(fieldsCreator.element().append($('<hr>')));
               fieldsCreator.resetFields();
-              
-            })
+            });
           }
-
-          
-        }
+        },
       }),
     ),
   )));
@@ -535,7 +531,7 @@ harlan.addPlugin((controller) => {
             }),
         );
 
-        serasaButton.click(
+      serasaButton.click(
         controller.click('icheques::consulta::serasa', result, doc, serasaButton),
       );
       result.addItem().prepend(serasaButton);
