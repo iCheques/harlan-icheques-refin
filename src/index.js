@@ -524,7 +524,7 @@ harlan.addPlugin((controller) => {
         .addClass('button')
         .append(
           $('<small />')
-            .text('R$ 3,70')
+            .text('CPF/CNPJ - R$ 3,70')
             .css({
               display: 'block',
               'font-size': '9px',
