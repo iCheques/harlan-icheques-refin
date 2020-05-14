@@ -1400,7 +1400,7 @@
 	};
 
 	var FieldsCreator = function FieldsCreator() {
-	  this.content = $('<div>').addClass('content');
+	  this.content = $('<div>').addClass('content serasa');
 	  this.container = $('<div>').addClass('container').append(this.content);
 	};
 
@@ -1779,7 +1779,7 @@
 
 	          if (!data.length) {
 	            var separatorElement = result.addSeparator(
-	              'Restrição Serasa',
+	              'Restrições Serasa',
 	              'Apontamentos e Restrições Financeiras e Comerciais',
 	              'Pendências e restrições financeiras no Serasa'
 	            ).addClass('error');
