@@ -24,7 +24,7 @@ export default class FieldsCreator {
   }
 
   resetFields() {
-    this.content = $('<div>').addClass('content');
+    this.content = $('<div>').addClass('content serasa');
     this.container = $('<div>').addClass('container').append(this.content);
   }
 }
