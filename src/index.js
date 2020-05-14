@@ -346,9 +346,14 @@ harlan.addPlugin((controller) => {
           documento: doc.replace(/[^0-9]/g, ''),
         },
         success: (dataRes) => {
-          const data = JSON.parse(dataRes);
+          let data = JSON.parse(dataRes);
+          data = data.informacoes[0].bello;
 
-          console.log(data);
+          try {
+            data = data.informacoes[0].bello;
+          } catch (e) {
+            console.log(e);
+          }
 
           const formatter = (new Intl.NumberFormat('pt-BR', {
             style: 'currency',

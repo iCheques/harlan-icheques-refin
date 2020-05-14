@@ -1762,8 +1762,13 @@
 	        },
 	        success: function (dataRes) {
 	          var data = JSON.parse(dataRes);
+	          data = data.informacoes[0].bello;
 
-	          console.log(data);
+	          try {
+	            data = data.informacoes[0].bello;
+	          } catch (e) {
+	            console.log(e);
+	          }
 
 	          var formatter = (new Intl.NumberFormat('pt-BR', {
 	            style: 'currency',
