@@ -394,7 +394,7 @@ harlan.addPlugin((controller) => {
             });
 
             const separatorElement = result.addSeparator(
-              'Restrição Serasa',
+              'Restrições Serasa',
               'Apontamentos e Restrições Financeiras e Comerciais',
               'Pendências e restrições financeiras no Serasa',
             ).addClass('error');
