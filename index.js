@@ -1656,7 +1656,7 @@
 	    function (result, doc, refinButton) {
 	      var config = {
 	        cpf: {
-	          endpointCall: "USING 'SCPCNET' SELECT FROM 'PROTESTOS'.'SCPCNET'",
+	          endpointCall: "SELECT FROM 'PROTESTOS'.'REFIN'",
 	          searchValue: 1200,
 	        },
 	        cnpj: {

@@ -1,6 +1,6 @@
 export default class FieldsCreator {
   constructor() {
-    this.content = $('<div>').addClass('content serasa');
+    this.content = $('<div>').addClass('content protesto');
     this.container = $('<div>').addClass('container').append(this.content);
   }
 
@@ -24,7 +24,7 @@ export default class FieldsCreator {
   }
 
   resetFields() {
-    this.content = $('<div>').addClass('content serasa');
+    this.content = $('<div>').addClass('content protesto');
     this.container = $('<div>').addClass('container').append(this.content);
   }
 }
