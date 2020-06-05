@@ -1400,7 +1400,7 @@
 	};
 
 	var FieldsCreator = function FieldsCreator() {
-	  this.content = $('<div>').addClass('content serasa');
+	  this.content = $('<div>').addClass('content protesto');
 	  this.container = $('<div>').addClass('container').append(this.content);
 	};
 
@@ -1424,7 +1424,7 @@
 	};
 
 	FieldsCreator.prototype.resetFields = function resetFields () {
-	  this.content = $('<div>').addClass('content serasa');
+	  this.content = $('<div>').addClass('content protesto');
 	  this.container = $('<div>').addClass('container').append(this.content);
 	};
 
@@ -1660,7 +1660,7 @@
 	          searchValue: 1200,
 	        },
 	        cnpj: {
-	          endpointCall: "SELECT FROM 'PROTESTOS'.'Refin'",
+	          endpointCall: "SELECT FROM 'PROTESTOS'.'REFIN'",
 	          searchValue: 2700,
 	        },
 	      };
