@@ -347,6 +347,7 @@ harlan.addPlugin((controller) => {
         },
         success: (dataRes) => {
           let data;
+          
           try {
             data = JSON.parse(dataRes);
           } catch (e) {
