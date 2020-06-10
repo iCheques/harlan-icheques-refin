@@ -1761,7 +1761,13 @@
 	          documento: doc.replace(/[^0-9]/g, ''),
 	        },
 	        success: function (dataRes) {
-	          var data = JSON.parse(dataRes);
+	          var data;
+	          
+	          try {
+	            data = JSON.parse(dataRes);
+	          } catch (e) {
+	            data = dataRes;
+	          }
 	          data = data.informacoes[0].bello;
 
 	          try {
