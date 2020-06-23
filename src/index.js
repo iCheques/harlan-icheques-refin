@@ -241,11 +241,11 @@ harlan.addPlugin((controller) => {
     (result, doc, refinButton) => {
       const config = {
         cpf: {
-          endpointCall: "SELECT FROM 'PROTESTOS'.'REFIN'",
+          endpointCall: "USING 'SCPCNet' SELECT FROM 'PROTESTOS'.'REFIN'",
           searchValue: 1200,
         },
         cnpj: {
-          endpointCall: "SELECT FROM 'PROTESTOS'.'REFIN'",
+          endpointCall: "USING 'SCPCNet' SELECT FROM 'PROTESTOS'.'REFIN'",
           searchValue: 2700,
         },
       };
