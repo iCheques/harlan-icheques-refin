@@ -39,13 +39,13 @@ harlan.addPlugin((controller) => {
           },
 
           success: (data) => {
-            const fieldset = imoveisButton.parent();
+            imoveisButton.parent();
             imoveisButton.remove();
 
             let firstCall = true;
             const addItem = (name, value) => (value ? result.addItem(name, value) : null);
             const objectData = JSON.parse(data);
-            if (objectData.hasOwnProperty('LGPD')) {
+            /* if (objectData.hasOwnProperty('LGPD')) {
               const separatorElement = result
                 .addSeparator(
                   'Bloqueio devido a LGPD 2020',
@@ -62,10 +62,10 @@ harlan.addPlugin((controller) => {
                 2000);
                 firstCall = false;
               }
-            }
+            } */
             const iptus = objectData.IPTUS;
 
-            const r = (d) => (d ? d.insertBefore(fieldset) : null);
+            /* const r = (d) => (d ? d.insertBefore(fieldset) : null);
 
             r(addItem('Score', get(data, 'SCORE')));
             r(
@@ -83,7 +83,7 @@ harlan.addPlugin((controller) => {
             r(addItem('Aposentadoria', get(data, 'DADOS_CADASTRAIS.RENDA_BENEFICIO')));
             r(addItem('Classe Social', get(data, 'DADOS_CADASTRAIS.CLASSE_SOCIAL')));
 
-            imoveisButton.remove();
+            imoveisButton.remove(); */
 
             if (iptus.length === 0) {
               /* controller.call('alert', {
@@ -136,55 +136,61 @@ harlan.addPlugin((controller) => {
                 ); */
                 // addItem('Situação', iptu.Situacao);
                 // addItem('Setor', iptu.Setor);
-                iptu.COMPLEMENTO.CONJUNTO.length > 0 ? addItem('Conjunto', iptu.COMPLEMENTO.CONJUNTO) : '';
-                iptu.COMPLEMENTO.QUADRA.length > 0 ? addItem('Quadra', iptu.COMPLEMENTO.QUADRA) : '';
-                iptu.COMPLEMENTO.LOTE.length > 0 ? addItem('Lote', iptu.COMPLEMENTO.LOTE) : '';
-                addItem('Endereço', iptu.ENDERECO);
-                addItem('Número', iptu.NUMERO);
-                addItem('Bairro', iptu.BAIRRO);
-                addItem('CEP', iptu.CEP);
+                if (iptu.hasOwnProperty('COMPLEMENTO')) {
+                  iptu.COMPLEMENTO.hasOwnProperty('CONJUNTO') ? addItem('Conjunto', iptu.COMPLEMENTO.CONJUNTO) : '';
+                  iptu.COMPLEMENTO.hasOwnProperty('QUADRA') ? addItem('Quadra', iptu.COMPLEMENTO.QUADRA) : '';
+                  iptu.COMPLEMENTO.hasOwnProperty('LOTE') ? addItem('Lote', iptu.COMPLEMENTO.LOTE) : '';
+                }
+                iptu.hasOwnProperty('ENDERECO') ? addItem('Endereço', iptu.ENDERECO) : '';
+                iptu.hasOwnProperty('NUMERO') ? addItem('Número', iptu.NUMERO) : '';
+                iptu.hasOwnProperty('BAIRRO') ? addItem('Bairro', iptu.BAIRRO) : '';
+                iptu.hasOwnProperty('CEP') ? addItem('CEP', iptu.CEP) : '';
                 // addItem('Código', iptu.CodLog);
-                addItem(
-                  'Área do Terreno',
-                  iptu.AREA.TOTAL
-                    ? `${numeral(iptu.AREA.TOTAL).format()} m²`
-                    : null,
-                );
-                /* addItem(
-                  'Área do Testada',
-                  iptu.Testada ? `${numeral(iptu.Testada).format()} m²` : null,
-                ); */
-                // addItem('Fração Ideal', iptu.FracaoIdeal);
-                addItem(
-                  'Área Construída',
-                  iptu.AREA.CONSTRUIDA
-                    ? `${numeral(iptu.AREA.CONSTRUIDA).format()} m²`
-                    : null,
-                );
-                addItem(
+                if (iptu.hasOwnProperty('AREA')) {
+                  iptu.AREA.hasOwnProperty('TOTAL') ? addItem(
+                    'Área do Terreno',
+                    iptu.AREA.TOTAL
+                      ? `${numeral(iptu.AREA.TOTAL).format()} m²`
+                      : null,
+                  ) : '';
+                  /* addItem(
+                    'Área do Testada',
+                    iptu.Testada ? `${numeral(iptu.Testada).format()} m²` : null,
+                  ); */
+                  // addItem('Fração Ideal', iptu.FracaoIdeal);
+                  iptu.AREA.hasOwnProperty('CONSTRUIDA') ? addItem(
+                    'Área Construída',
+                    iptu.AREA.CONSTRUIDA
+                      ? `${numeral(iptu.AREA.CONSTRUIDA).format()} m²`
+                      : null,
+                  ) : '';
+                }
+                iptu.hasOwnProperty('ANO') ? addItem(
                   'Ano de Construção',
                   iptu.ANO
                     ? numeral(iptu.ANO).format()
                     : null,
-                );
-                addItem(
+                ) : '';
+                iptu.hasOwnProperty('ANO') ? addItem(
                   'Base de Cálculo do IPTU',
                   iptu.ANO
                     ? numeral(iptu.ANO).format('$0,0.00')
                     : null,
-                );
-                addItem(
-                  'Valor do IPTU',
-                  iptu.VALOR.IPTU
-                    ? numeral(iptu.VALOR.IPTU).format('$0,0.00')
-                    : null,
-                );
-                addItem(
-                  'Valor do IMÓVEL',
-                  iptu.VALOR.IPTU
-                    ? numeral(iptu.VALOR.CONSTRUCAO).format('$0,0.00')
-                    : null,
-                );
+                ) : '';
+                if (iptu.hasOwnProperty('VALOR')) {
+                  iptu.VALOR.hasOwnProperty('IPTU') ? addItem(
+                    'Valor do IPTU',
+                    iptu.VALOR.IPTU
+                      ? numeral(iptu.VALOR.IPTU).format('$0,0.00')
+                      : null,
+                  ) : '';
+                  iptu.VALOR.hasOwnProperty('IPTU') ? addItem(
+                    'Valor do IMÓVEL',
+                    iptu.VALOR.IPTU
+                      ? numeral(iptu.VALOR.CONSTRUCAO).format('$0,0.00')
+                      : null,
+                  ) : '';
+                }
                 /* addItem(
                   'Data de Consulta do Cadastro',
                   iptu.DataConsultaCadastro,
@@ -347,7 +353,7 @@ harlan.addPlugin((controller) => {
         },
         success: (dataRes) => {
           let data;
-          
+
           try {
             data = JSON.parse(dataRes);
           } catch (e) {

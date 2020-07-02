@@ -5,33 +5,6 @@
 	$$1 = $$1 && Object.prototype.hasOwnProperty.call($$1, 'default') ? $$1['default'] : $$1;
 	numeral = numeral && Object.prototype.hasOwnProperty.call(numeral, 'default') ? numeral['default'] : numeral;
 
-	/**
-	 * Checks if `value` is classified as an `Array` object.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 0.1.0
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is an array, else `false`.
-	 * @example
-	 *
-	 * _.isArray([1, 2, 3]);
-	 * // => true
-	 *
-	 * _.isArray(document.body.children);
-	 * // => false
-	 *
-	 * _.isArray('abc');
-	 * // => false
-	 *
-	 * _.isArray(_.noop);
-	 * // => false
-	 */
-	var isArray = Array.isArray;
-
-	var isArray_1 = isArray;
-
 	var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
 	function createCommonjsModule(fn, module) {
@@ -148,90 +121,6 @@
 	}
 
 	var _baseGetTag = baseGetTag;
-
-	/**
-	 * Checks if `value` is object-like. A value is object-like if it's not `null`
-	 * and has a `typeof` result of "object".
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 4.0.0
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
-	 * @example
-	 *
-	 * _.isObjectLike({});
-	 * // => true
-	 *
-	 * _.isObjectLike([1, 2, 3]);
-	 * // => true
-	 *
-	 * _.isObjectLike(_.noop);
-	 * // => false
-	 *
-	 * _.isObjectLike(null);
-	 * // => false
-	 */
-	function isObjectLike(value) {
-	  return value != null && typeof value == 'object';
-	}
-
-	var isObjectLike_1 = isObjectLike;
-
-	/** `Object#toString` result references. */
-	var symbolTag = '[object Symbol]';
-
-	/**
-	 * Checks if `value` is classified as a `Symbol` primitive or object.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 4.0.0
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is a symbol, else `false`.
-	 * @example
-	 *
-	 * _.isSymbol(Symbol.iterator);
-	 * // => true
-	 *
-	 * _.isSymbol('abc');
-	 * // => false
-	 */
-	function isSymbol(value) {
-	  return typeof value == 'symbol' ||
-	    (isObjectLike_1(value) && _baseGetTag(value) == symbolTag);
-	}
-
-	var isSymbol_1 = isSymbol;
-
-	/** Used to match property names within property paths. */
-	var reIsDeepProp = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/,
-	    reIsPlainProp = /^\w*$/;
-
-	/**
-	 * Checks if `value` is a property name and not a property path.
-	 *
-	 * @private
-	 * @param {*} value The value to check.
-	 * @param {Object} [object] The object to query keys on.
-	 * @returns {boolean} Returns `true` if `value` is a property name, else `false`.
-	 */
-	function isKey(value, object) {
-	  if (isArray_1(value)) {
-	    return false;
-	  }
-	  var type = typeof value;
-	  if (type == 'number' || type == 'symbol' || type == 'boolean' ||
-	      value == null || isSymbol_1(value)) {
-	    return true;
-	  }
-	  return reIsPlainProp.test(value) || !reIsDeepProp.test(value) ||
-	    (object != null && value in Object(object));
-	}
-
-	var _isKey = isKey;
 
 	/**
 	 * Checks if `value` is the
@@ -1023,180 +912,9 @@
 	  return result;
 	});
 
-	var _stringToPath = stringToPath;
-
-	/**
-	 * A specialized version of `_.map` for arrays without support for iteratee
-	 * shorthands.
-	 *
-	 * @private
-	 * @param {Array} [array] The array to iterate over.
-	 * @param {Function} iteratee The function invoked per iteration.
-	 * @returns {Array} Returns the new mapped array.
-	 */
-	function arrayMap(array, iteratee) {
-	  var index = -1,
-	      length = array == null ? 0 : array.length,
-	      result = Array(length);
-
-	  while (++index < length) {
-	    result[index] = iteratee(array[index], index, array);
-	  }
-	  return result;
-	}
-
-	var _arrayMap = arrayMap;
-
-	/** Used as references for various `Number` constants. */
-	var INFINITY = 1 / 0;
-
 	/** Used to convert symbols to primitives and strings. */
 	var symbolProto = _Symbol ? _Symbol.prototype : undefined,
 	    symbolToString = symbolProto ? symbolProto.toString : undefined;
-
-	/**
-	 * The base implementation of `_.toString` which doesn't convert nullish
-	 * values to empty strings.
-	 *
-	 * @private
-	 * @param {*} value The value to process.
-	 * @returns {string} Returns the string.
-	 */
-	function baseToString(value) {
-	  // Exit early for strings to avoid a performance hit in some environments.
-	  if (typeof value == 'string') {
-	    return value;
-	  }
-	  if (isArray_1(value)) {
-	    // Recursively convert values (susceptible to call stack limits).
-	    return _arrayMap(value, baseToString) + '';
-	  }
-	  if (isSymbol_1(value)) {
-	    return symbolToString ? symbolToString.call(value) : '';
-	  }
-	  var result = (value + '');
-	  return (result == '0' && (1 / value) == -INFINITY) ? '-0' : result;
-	}
-
-	var _baseToString = baseToString;
-
-	/**
-	 * Converts `value` to a string. An empty string is returned for `null`
-	 * and `undefined` values. The sign of `-0` is preserved.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 4.0.0
-	 * @category Lang
-	 * @param {*} value The value to convert.
-	 * @returns {string} Returns the converted string.
-	 * @example
-	 *
-	 * _.toString(null);
-	 * // => ''
-	 *
-	 * _.toString(-0);
-	 * // => '-0'
-	 *
-	 * _.toString([1, 2, 3]);
-	 * // => '1,2,3'
-	 */
-	function toString(value) {
-	  return value == null ? '' : _baseToString(value);
-	}
-
-	var toString_1 = toString;
-
-	/**
-	 * Casts `value` to a path array if it's not one.
-	 *
-	 * @private
-	 * @param {*} value The value to inspect.
-	 * @param {Object} [object] The object to query keys on.
-	 * @returns {Array} Returns the cast property path array.
-	 */
-	function castPath(value, object) {
-	  if (isArray_1(value)) {
-	    return value;
-	  }
-	  return _isKey(value, object) ? [value] : _stringToPath(toString_1(value));
-	}
-
-	var _castPath = castPath;
-
-	/** Used as references for various `Number` constants. */
-	var INFINITY$1 = 1 / 0;
-
-	/**
-	 * Converts `value` to a string key if it's not a string or symbol.
-	 *
-	 * @private
-	 * @param {*} value The value to inspect.
-	 * @returns {string|symbol} Returns the key.
-	 */
-	function toKey(value) {
-	  if (typeof value == 'string' || isSymbol_1(value)) {
-	    return value;
-	  }
-	  var result = (value + '');
-	  return (result == '0' && (1 / value) == -INFINITY$1) ? '-0' : result;
-	}
-
-	var _toKey = toKey;
-
-	/**
-	 * The base implementation of `_.get` without support for default values.
-	 *
-	 * @private
-	 * @param {Object} object The object to query.
-	 * @param {Array|string} path The path of the property to get.
-	 * @returns {*} Returns the resolved value.
-	 */
-	function baseGet(object, path) {
-	  path = _castPath(path, object);
-
-	  var index = 0,
-	      length = path.length;
-
-	  while (object != null && index < length) {
-	    object = object[_toKey(path[index++])];
-	  }
-	  return (index && index == length) ? object : undefined;
-	}
-
-	var _baseGet = baseGet;
-
-	/**
-	 * Gets the value at `path` of `object`. If the resolved value is
-	 * `undefined`, the `defaultValue` is returned in its place.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 3.7.0
-	 * @category Object
-	 * @param {Object} object The object to query.
-	 * @param {Array|string} path The path of the property to get.
-	 * @param {*} [defaultValue] The value returned for `undefined` resolved values.
-	 * @returns {*} Returns the resolved value.
-	 * @example
-	 *
-	 * var object = { 'a': [{ 'b': { 'c': 3 } }] };
-	 *
-	 * _.get(object, 'a[0].b.c');
-	 * // => 3
-	 *
-	 * _.get(object, ['a', '0', 'b', 'c']);
-	 * // => 3
-	 *
-	 * _.get(object, 'a.b.c', 'default');
-	 * // => 'default'
-	 */
-	function get(object, path, defaultValue) {
-	  var result = object == null ? undefined : _baseGet(object, path);
-	  return result === undefined ? defaultValue : result;
-	}
-
-	var get_1 = get;
 
 	var cpf = createCommonjsModule(function (module, exports) {
 	(function(commonjs){
@@ -1458,49 +1176,51 @@
 	          },
 
 	          success: function (data) {
-	            var fieldset = imoveisButton.parent();
+	            imoveisButton.parent();
 	            imoveisButton.remove();
 
 	            var firstCall = true;
 	            var addItem = function (name, value) { return (value ? result.addItem(name, value) : null); };
 	            var objectData = JSON.parse(data);
-	            if (objectData.hasOwnProperty('LGPD')) {
-	              var separatorElement = result
+	            /* if (objectData.hasOwnProperty('LGPD')) {
+	              const separatorElement = result
 	                .addSeparator(
 	                  'Bloqueio devido a LGPD 2020',
 	                  'Infelizmente o documento consultado nos pediu para bloquear suas informações de imóveis de acordo à LGPD 2020.',
-	                  ("Não se preocupe, estornamos valor e você não foi cobrado(a) pela consulta do cpf: " + (cpf_cnpj_1.isValid(doc) ? cpf_cnpj_1.format(doc) : cpf_cnpj_2.format(doc)) + ".")
+	                  `Não se preocupe, estornamos valor e você não foi cobrado(a) pela consulta do cpf: ${
+	                    CPF.isValid(doc) ? CPF.format(doc) : CNPJ.format(doc)
+	                  }.`,
 	                )
 	                .addClass('error');
 	              if (firstCall) {
-	                $$1('html, body').animate({
+	                $('html, body').animate({
 	                  scrollTop: separatorElement.offset().top,
 	                },
 	                2000);
 	                firstCall = false;
 	              }
-	            }
+	            } */
 	            var iptus = objectData.IPTUS;
 
-	            var r = function (d) { return (d ? d.insertBefore(fieldset) : null); };
+	            /* const r = (d) => (d ? d.insertBefore(fieldset) : null);
 
-	            r(addItem('Score', get_1(data, 'SCORE')));
+	            r(addItem('Score', get(data, 'SCORE')));
 	            r(
 	              addItem(
 	                'Título de Eleitor',
-	                get_1(data, 'DADOS_CADASTRAIS.TITULO_ELEITOR')
-	              )
+	                get(data, 'DADOS_CADASTRAIS.TITULO_ELEITOR'),
+	              ),
 	            );
 	            r(
 	              addItem(
 	                'Salário Presumido',
-	                get_1(data, 'DADOS_CADASTRAIS.RENDA_PRESUMIDA')
-	              )
+	                get(data, 'DADOS_CADASTRAIS.RENDA_PRESUMIDA'),
+	              ),
 	            );
-	            r(addItem('Aposentadoria', get_1(data, 'DADOS_CADASTRAIS.RENDA_BENEFICIO')));
-	            r(addItem('Classe Social', get_1(data, 'DADOS_CADASTRAIS.CLASSE_SOCIAL')));
+	            r(addItem('Aposentadoria', get(data, 'DADOS_CADASTRAIS.RENDA_BENEFICIO')));
+	            r(addItem('Classe Social', get(data, 'DADOS_CADASTRAIS.CLASSE_SOCIAL')));
 
-	            imoveisButton.remove();
+	            imoveisButton.remove(); */
 
 	            if (iptus.length === 0) {
 	              /* controller.call('alert', {
@@ -1511,7 +1231,7 @@
 	                  CPF.isValid(doc) ? CPF.format(doc) : CNPJ.format(doc)
 	                } não foram encontrados registros de IPTU.`,
 	              }); */
-	              var separatorElement$1 = result
+	              var separatorElement = result
 	                .addSeparator(
 	                  'Não foram encontrados registros de IPTU',
 	                  'O sistema não encontrou nenhum registro de IPTU para o documento informado.',
@@ -1520,7 +1240,7 @@
 	                .addClass('error');
 	              if (firstCall) {
 	                $$1('html, body').animate({
-	                  scrollTop: separatorElement$1.offset().top,
+	                  scrollTop: separatorElement.offset().top,
 	                },
 	                2000);
 	                firstCall = false;
@@ -1551,55 +1271,61 @@
 	                ); */
 	                // addItem('Situação', iptu.Situacao);
 	                // addItem('Setor', iptu.Setor);
-	                iptu.COMPLEMENTO.CONJUNTO.length > 0 ? addItem('Conjunto', iptu.COMPLEMENTO.CONJUNTO) : '';
-	                iptu.COMPLEMENTO.QUADRA.length > 0 ? addItem('Quadra', iptu.COMPLEMENTO.QUADRA) : '';
-	                iptu.COMPLEMENTO.LOTE.length > 0 ? addItem('Lote', iptu.COMPLEMENTO.LOTE) : '';
-	                addItem('Endereço', iptu.ENDERECO);
-	                addItem('Número', iptu.NUMERO);
-	                addItem('Bairro', iptu.BAIRRO);
-	                addItem('CEP', iptu.CEP);
+	                if (iptu.hasOwnProperty('COMPLEMENTO')) {
+	                  iptu.COMPLEMENTO.hasOwnProperty('CONJUNTO') ? addItem('Conjunto', iptu.COMPLEMENTO.CONJUNTO) : '';
+	                  iptu.COMPLEMENTO.hasOwnProperty('QUADRA') ? addItem('Quadra', iptu.COMPLEMENTO.QUADRA) : '';
+	                  iptu.COMPLEMENTO.hasOwnProperty('LOTE') ? addItem('Lote', iptu.COMPLEMENTO.LOTE) : '';
+	                }
+	                iptu.hasOwnProperty('ENDERECO') ? addItem('Endereço', iptu.ENDERECO) : '';
+	                iptu.hasOwnProperty('NUMERO') ? addItem('Número', iptu.NUMERO) : '';
+	                iptu.hasOwnProperty('BAIRRO') ? addItem('Bairro', iptu.BAIRRO) : '';
+	                iptu.hasOwnProperty('CEP') ? addItem('CEP', iptu.CEP) : '';
 	                // addItem('Código', iptu.CodLog);
-	                addItem(
-	                  'Área do Terreno',
-	                  iptu.AREA.TOTAL
-	                    ? ((numeral(iptu.AREA.TOTAL).format()) + " m²")
-	                    : null
-	                );
-	                /* addItem(
-	                  'Área do Testada',
-	                  iptu.Testada ? `${numeral(iptu.Testada).format()} m²` : null,
-	                ); */
-	                // addItem('Fração Ideal', iptu.FracaoIdeal);
-	                addItem(
-	                  'Área Construída',
-	                  iptu.AREA.CONSTRUIDA
-	                    ? ((numeral(iptu.AREA.CONSTRUIDA).format()) + " m²")
-	                    : null
-	                );
-	                addItem(
+	                if (iptu.hasOwnProperty('AREA')) {
+	                  iptu.AREA.hasOwnProperty('TOTAL') ? addItem(
+	                    'Área do Terreno',
+	                    iptu.AREA.TOTAL
+	                      ? ((numeral(iptu.AREA.TOTAL).format()) + " m²")
+	                      : null
+	                  ) : '';
+	                  /* addItem(
+	                    'Área do Testada',
+	                    iptu.Testada ? `${numeral(iptu.Testada).format()} m²` : null,
+	                  ); */
+	                  // addItem('Fração Ideal', iptu.FracaoIdeal);
+	                  iptu.AREA.hasOwnProperty('CONSTRUIDA') ? addItem(
+	                    'Área Construída',
+	                    iptu.AREA.CONSTRUIDA
+	                      ? ((numeral(iptu.AREA.CONSTRUIDA).format()) + " m²")
+	                      : null
+	                  ) : '';
+	                }
+	                iptu.hasOwnProperty('ANO') ? addItem(
 	                  'Ano de Construção',
 	                  iptu.ANO
 	                    ? numeral(iptu.ANO).format()
 	                    : null
-	                );
-	                addItem(
+	                ) : '';
+	                iptu.hasOwnProperty('ANO') ? addItem(
 	                  'Base de Cálculo do IPTU',
 	                  iptu.ANO
 	                    ? numeral(iptu.ANO).format('$0,0.00')
 	                    : null
-	                );
-	                addItem(
-	                  'Valor do IPTU',
-	                  iptu.VALOR.IPTU
-	                    ? numeral(iptu.VALOR.IPTU).format('$0,0.00')
-	                    : null
-	                );
-	                addItem(
-	                  'Valor do IMÓVEL',
-	                  iptu.VALOR.IPTU
-	                    ? numeral(iptu.VALOR.CONSTRUCAO).format('$0,0.00')
-	                    : null
-	                );
+	                ) : '';
+	                if (iptu.hasOwnProperty('VALOR')) {
+	                  iptu.VALOR.hasOwnProperty('IPTU') ? addItem(
+	                    'Valor do IPTU',
+	                    iptu.VALOR.IPTU
+	                      ? numeral(iptu.VALOR.IPTU).format('$0,0.00')
+	                      : null
+	                  ) : '';
+	                  iptu.VALOR.hasOwnProperty('IPTU') ? addItem(
+	                    'Valor do IMÓVEL',
+	                    iptu.VALOR.IPTU
+	                      ? numeral(iptu.VALOR.CONSTRUCAO).format('$0,0.00')
+	                      : null
+	                  ) : '';
+	                }
 	                /* addItem(
 	                  'Data de Consulta do Cadastro',
 	                  iptu.DataConsultaCadastro,
@@ -1762,7 +1488,7 @@
 	        },
 	        success: function (dataRes) {
 	          var data;
-	          
+
 	          try {
 	            data = JSON.parse(dataRes);
 	          } catch (e) {
