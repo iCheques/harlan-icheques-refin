@@ -1118,7 +1118,7 @@
 	};
 
 	var FieldsCreator = function FieldsCreator() {
-	  this.content = $('<div>').addClass('content protesto');
+	  this.content = $('<div>').addClass('content serasa');
 	  this.container = $('<div>').addClass('container').append(this.content);
 	};
 
