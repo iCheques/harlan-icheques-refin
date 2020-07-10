@@ -1494,7 +1494,6 @@
 	          } catch (e) {
 	            data = dataRes;
 	          }
-	          data = data.informacoes[0].bello;
 
 	          try {
 	            data = data.informacoes[0].bello;
