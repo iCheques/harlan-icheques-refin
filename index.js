@@ -1290,7 +1290,7 @@
 	    if ( scoreButton === void 0 ) scoreButton = null;
 
 	    var data = JSON.parse(dataRes);
-	    if (!data.hasOwnProperty(score)) { return; }
+	    if (!data.hasOwnProperty('score')) { return; }
 	    var score = data.score[0];
 	    
 	    if(scoreButton != null) { scoreButton.remove(); }
