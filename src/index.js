@@ -50,6 +50,7 @@ harlan.addPlugin((controller) => {
           } não foram encontrados registros de IPTU.`,
         )
         .addClass('error');
+      controller.call('minimizar::categorias', result.element());
       if (firstCall) {
         $('html, body').animate({
           scrollTop: separatorElement.offset().top,
@@ -126,6 +127,8 @@ harlan.addPlugin((controller) => {
           ) : '';
         }
       });
+
+      controller.call('minimizar::categorias', result.element());
     }
   });
 
@@ -141,7 +144,9 @@ harlan.addPlugin((controller) => {
             documento: doc.replace(/[^0-9]/g, ''),
           },
 
-          success: (data) => controller.call('icheques::consulta::imoveis::generate', data, result, doc, false, false, imoveisButton),
+          success: (data) => {
+            controller.call('icheques::consulta::imoveis::generate', data, result, doc, false, false, imoveisButton);
+          },
         }),
       ),
     )),
@@ -175,6 +180,10 @@ harlan.addPlugin((controller) => {
     addItem('Classificação', score.classificacao);
     addItem('Análise', score.texto);
     addItem('Status', score.status);
+
+    console.log('Antes de minimizar', result);
+
+    controller.call('minimizar::categorias', result.element());
   });
 
   controller.registerCall('icheques::consulta::score', (result, doc, scoreButton) => hasCredits(3000, () => controller.serverCommunication.call(
@@ -186,7 +195,9 @@ harlan.addPlugin((controller) => {
         data: {
           documento: doc.replace(/[^0-9]/g, ''),
         },
-        success: (dataRes) => controller.call('icheques::consulta::score::generate', dataRes, result, doc, false, false, scoreButton),
+        success: (dataRes) => {
+          controller.call('icheques::consulta::score::generate', dataRes, result, doc, false, false, scoreButton);
+        },
       }),
     ),
   )));
@@ -226,6 +237,7 @@ harlan.addPlugin((controller) => {
           'Pendências e restrições financeiras nos bureaus de crédito Refin e Pefin',
         )
         .addClass('error');
+        controller.call('minimizar::categorias', result.element());
       if (firstCall) {
         $('html, body').animate({
           scrollTop: separatorElement.offset().top,
@@ -266,6 +278,8 @@ harlan.addPlugin((controller) => {
         // addItem('Cidade Associado', consultaRealizada.CidadeAssociado,);
         // addItem('UF Associado', consultaRealizada.UfAssociado);
       });
+
+      controller.call('minimizar::categorias', result.element());
     }
   });
 
@@ -296,7 +310,9 @@ harlan.addPlugin((controller) => {
               documento: doc.replace(/[^0-9]/g, ''),
             },
 
-            success: (data) => controller.call('icheques::consulta::refin::generate', data, result, doc, false, false, refinButton),
+            success: (data) => {
+              controller.call('icheques::consulta::refin::generate', data, result, doc, false, false, refinButton);
+            },
           }),
         ),
       ));
@@ -348,6 +364,8 @@ harlan.addPlugin((controller) => {
 
       addItem('Informação', `Para o documento ${CPF.isValid(doc) ? CPF.format(doc) : CNPJ.format(doc)} não foram encontrados registros de restrições.`);
       result.element().append(fieldsCreator.element());
+
+      controller.call('minimizar::categorias', result.element())
       
       if (!alertDisabled) controller.call('alert', {
         icon: 'pass',
@@ -383,6 +401,8 @@ harlan.addPlugin((controller) => {
         result.element().append(fieldsCreator.element().append($('<hr>')));
         fieldsCreator.resetFields();
       });
+
+      controller.call('minimizar::categorias', result.element())
     }
   });
 
@@ -395,7 +415,9 @@ harlan.addPlugin((controller) => {
         data: {
           documento: doc.replace(/[^0-9]/g, ''),
         },
-        success: (dataRes) => controller.call('icheques::consulta::serasa::generate', dataRes, result, doc, false, false, serasaButton),
+        success: (dataRes) => {
+          controller.call('icheques::consulta::serasa::generate', dataRes, result, doc, false, false, serasaButton);
+        },
       }),
     ),
   )));

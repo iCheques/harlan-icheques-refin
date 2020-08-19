@@ -1188,6 +1188,7 @@
 	          ("Para o documento " + (cpf_cnpj_1.isValid(doc) ? cpf_cnpj_1.format(doc) : cpf_cnpj_2.format(doc)) + " não foram encontrados registros de IPTU.")
 	        )
 	        .addClass('error');
+	      controller.call('minimizar::categorias', result.element());
 	      if (firstCall) {
 	        $$1('html, body').animate({
 	          scrollTop: separatorElement.offset().top,
@@ -1264,6 +1265,8 @@
 	          ) : '';
 	        }
 	      });
+
+	      controller.call('minimizar::categorias', result.element());
 	    }
 	  });
 
@@ -1279,7 +1282,9 @@
 	            documento: doc.replace(/[^0-9]/g, ''),
 	          },
 
-	          success: function (data) { return controller.call('icheques::consulta::imoveis::generate', data, result, doc, false, false, imoveisButton); },
+	          success: function (data) {
+	            controller.call('icheques::consulta::imoveis::generate', data, result, doc, false, false, imoveisButton);
+	          },
 	        })
 	      )
 	    ); }); }
@@ -1316,6 +1321,10 @@
 	    addItem('Classificação', score.classificacao);
 	    addItem('Análise', score.texto);
 	    addItem('Status', score.status);
+
+	    console.log('Antes de minimizar', result);
+
+	    controller.call('minimizar::categorias', result.element());
 	  });
 
 	  controller.registerCall('icheques::consulta::score', function (result, doc, scoreButton) { return hasCredits(3000, function () { return controller.serverCommunication.call(
@@ -1327,7 +1336,9 @@
 	        data: {
 	          documento: doc.replace(/[^0-9]/g, ''),
 	        },
-	        success: function (dataRes) { return controller.call('icheques::consulta::score::generate', dataRes, result, doc, false, false, scoreButton); },
+	        success: function (dataRes) {
+	          controller.call('icheques::consulta::score::generate', dataRes, result, doc, false, false, scoreButton);
+	        },
 	      })
 	    )
 	  ); }); });
@@ -1369,6 +1380,7 @@
 	          'Pendências e restrições financeiras nos bureaus de crédito Refin e Pefin'
 	        )
 	        .addClass('error');
+	        controller.call('minimizar::categorias', result.element());
 	      if (firstCall) {
 	        $$1('html, body').animate({
 	          scrollTop: separatorElement.offset().top,
@@ -1409,6 +1421,8 @@
 	        // addItem('Cidade Associado', consultaRealizada.CidadeAssociado,);
 	        // addItem('UF Associado', consultaRealizada.UfAssociado);
 	      });
+
+	      controller.call('minimizar::categorias', result.element());
 	    }
 	  });
 
@@ -1441,7 +1455,9 @@
 	              documento: doc.replace(/[^0-9]/g, ''),
 	            },
 
-	            success: function (data) { return controller.call('icheques::consulta::refin::generate', data, result, doc, false, false, refinButton); },
+	            success: function (data) {
+	              controller.call('icheques::consulta::refin::generate', data, result, doc, false, false, refinButton);
+	            },
 	          })
 	        )
 	      ); });
@@ -1497,6 +1513,8 @@
 
 	      addItem('Informação', ("Para o documento " + (cpf_cnpj_1.isValid(doc) ? cpf_cnpj_1.format(doc) : cpf_cnpj_2.format(doc)) + " não foram encontrados registros de restrições."));
 	      result.element().append(fieldsCreator.element());
+
+	      controller.call('minimizar::categorias', result.element());
 	      
 	      if (!alertDisabled) { controller.call('alert', {
 	        icon: 'pass',
@@ -1530,6 +1548,8 @@
 	        result.element().append(fieldsCreator.element().append($$1('<hr>')));
 	        fieldsCreator.resetFields();
 	      });
+
+	      controller.call('minimizar::categorias', result.element());
 	    }
 	  });
 
@@ -1542,7 +1562,9 @@
 	        data: {
 	          documento: doc.replace(/[^0-9]/g, ''),
 	        },
-	        success: function (dataRes) { return controller.call('icheques::consulta::serasa::generate', dataRes, result, doc, false, false, serasaButton); },
+	        success: function (dataRes) {
+	          controller.call('icheques::consulta::serasa::generate', dataRes, result, doc, false, false, serasaButton);
+	        },
 	      })
 	    )
 	  ); }); });
