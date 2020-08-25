@@ -215,10 +215,33 @@ harlan.addPlugin((controller) => {
 
     if ($.isEmptyObject(newData)) return;
 
+    let possuiRestricoes = false;
+
+    if(newData.hasOwnProperty('spc')) possuiRestricoes = newData.spc.length;
+
     let firstCall = !firstCallDisabled;
     // eslint-disable-next-line max-len
     const addItem = (name, value, after) => value && result.addItem(name, value, undefined, after);
-    if (!newData.spc.length) {
+    if (!possuiRestricoes) {
+      const separatorElement = result.addSeparator(
+        'Restrições Pefin/Refin Boa Vista',
+        'Apontamentos e Restrições Financeiras e Comerciais',
+        'Pendências e restrições financeiras no Boa Vista',
+      ).addClass('error');
+
+      if (firstCall) {
+        $('html, body').animate({
+          scrollTop: separatorElement.offset().top,
+        },
+        2000);
+        firstCall = false;
+      }
+
+      addItem('Informação', `Para o documento ${CPF.isValid(doc) ? CPF.format(doc) : CNPJ.format(doc)} não foram encontrados registros de restrições.`);
+      result.element().append(fieldsCreator.element());
+
+      controller.call('minimizar::categorias', result.element());
+
       if(!alertDisabled) controller.call('alert', {
         icon: 'pass',
         title: 'Não há Pefin/Refin Boa Vista no Target',
@@ -300,7 +323,7 @@ harlan.addPlugin((controller) => {
       const opt = doc.replace(/[^0-9]/g, '').length > 11 ? 'cnpj' : 'cpf';
       const { endpointCall, searchValue } = config[opt];
 
-      hasCredits(searchValue, () => controller.server.call(
+      hasCredits(searchValue, () => controller.serverCommunication.call(
         endpointCall,
         controller.call(
           'loader::ajax',

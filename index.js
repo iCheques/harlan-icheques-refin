@@ -1360,10 +1360,33 @@
 
 	    if ($$1.isEmptyObject(newData)) { return; }
 
+	    var possuiRestricoes = false;
+
+	    if(newData.hasOwnProperty('spc')) { possuiRestricoes = newData.spc.length; }
+
 	    var firstCall = !firstCallDisabled;
 	    // eslint-disable-next-line max-len
 	    var addItem = function (name, value, after) { return value && result.addItem(name, value, undefined, after); };
-	    if (!newData.spc.length) {
+	    if (!possuiRestricoes) {
+	      var separatorElement = result.addSeparator(
+	        'Restrições Pefin/Refin Boa Vista',
+	        'Apontamentos e Restrições Financeiras e Comerciais',
+	        'Pendências e restrições financeiras no Boa Vista'
+	      ).addClass('error');
+
+	      if (firstCall) {
+	        $$1('html, body').animate({
+	          scrollTop: separatorElement.offset().top,
+	        },
+	        2000);
+	        firstCall = false;
+	      }
+
+	      addItem('Informação', ("Para o documento " + (cpf_cnpj_1.isValid(doc) ? cpf_cnpj_1.format(doc) : cpf_cnpj_2.format(doc)) + " não foram encontrados registros de restrições."));
+	      result.element().append(fieldsCreator.element());
+
+	      controller.call('minimizar::categorias', result.element());
+
 	      if(!alertDisabled) { controller.call('alert', {
 	        icon: 'pass',
 	        title: 'Não há Pefin/Refin Boa Vista no Target',
@@ -1445,7 +1468,7 @@
 	      var endpointCall = ref.endpointCall;
 	      var searchValue = ref.searchValue;
 
-	      hasCredits(searchValue, function () { return controller.server.call(
+	      hasCredits(searchValue, function () { return controller.serverCommunication.call(
 	        endpointCall,
 	        controller.call(
 	          'loader::ajax',
