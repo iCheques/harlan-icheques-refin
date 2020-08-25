@@ -249,6 +249,8 @@ harlan.addPlugin((controller) => {
           CPF.isValid(doc) ? CPF.format(doc) : CNPJ.format(doc)
         } não foram encontrados registros de Refin/Pefin.`,
       });
+
+      return;
     }
 
     newData.spc.forEach((spc) => {

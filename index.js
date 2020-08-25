@@ -1392,6 +1392,8 @@
 	        subtitle: 'O sistema encontrou 0 ocorrências de Pefin/Refin para o documento informado.',
 	        paragraph: ("Para o documento " + (cpf_cnpj_1.isValid(doc) ? cpf_cnpj_1.format(doc) : cpf_cnpj_2.format(doc)) + " não foram encontrados registros de Refin/Pefin."),
 	      }); }
+
+	      return;
 	    }
 
 	    newData.spc.forEach(function (spc) {
