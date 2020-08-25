@@ -1383,7 +1383,6 @@
 	      }
 
 	      addItem('Informação', ("Para o documento " + (cpf_cnpj_1.isValid(doc) ? cpf_cnpj_1.format(doc) : cpf_cnpj_2.format(doc)) + " não foram encontrados registros de restrições."));
-	      result.element().append(fieldsCreator.element());
 
 	      controller.call('minimizar::categorias', result.element());
 

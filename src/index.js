@@ -238,7 +238,6 @@ harlan.addPlugin((controller) => {
       }
 
       addItem('Informação', `Para o documento ${CPF.isValid(doc) ? CPF.format(doc) : CNPJ.format(doc)} não foram encontrados registros de restrições.`);
-      result.element().append(fieldsCreator.element());
 
       controller.call('minimizar::categorias', result.element());
 
