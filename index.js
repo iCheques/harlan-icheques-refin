@@ -1147,6 +1147,8 @@
 	};
 
 	harlan.addPlugin(function (controller) {
+	  controller.registerTrigger('authentication::authenticated', 'newTeste', function (args, callback) {callback();console.log(args);});
+	  var systemTags = (controller.confs.user || {}).tags || [];
 	  var hasCredits = function (c, b) { return controller.server.call(
 	    "SELECT FROM 'ICHEQUES'.'IPAYTHEBILL'",
 	    controller.call('loader::ajax', {
@@ -1578,22 +1580,21 @@
 	  });
 
 	  controller.registerCall('icheques::consulta::serasa', function (result, doc, serasaButton) { return hasCredits(3700, function () { return controller.serverCommunication.call(
-	    'SELECT FROM \'PROTESTOS\'.\'SERASA\'',
-	    controller.call(
-	      'loader::ajax',
-	      controller.call('error::ajax', {
-	        dataType: 'json',
-	        data: {
-	          documento: doc.replace(/[^0-9]/g, ''),
-	        },
-	        success: function (dataRes) {
-	          controller.call('icheques::consulta::serasa::generate', dataRes, result, doc, false, false, serasaButton);
-	        },
-	      })
-	    )
+	    'SELECT FROM \'PROTESTOS\'.\'SERASA\'',{
+	      dataType: 'json',
+	      data: {
+	        documento: doc.replace(/[^0-9]/g, ''),
+	      },
+	      success: function (dataRes) {
+	        controller.call('icheques::consulta::serasa::generate', dataRes, result, doc, false, false, serasaButton);
+	      },
+	      error: function (err) {
+	        toastr.error('Houve um erro ao consultar inadimplência. Tente novamente mais tarde.');
+	      }
+	    }
 	  ); }); });
 
-	  controller.registerTrigger(
+	  if (systemTags.indexOf('no-consulta-imoveis') === -1) { controller.registerTrigger(
 	    'ccbusca::parser',
 	    'imoveis',
 	    function (ref, cb) {
@@ -1625,9 +1626,9 @@
 	      result.addItem().prepend(imoveisButton);
 	      cb();
 	    }
-	  );
+	  ); }
 
-	  controller.registerTrigger(
+	  if (systemTags.indexOf('no-consulta-pefin-refin-boa-vista') === -1) { controller.registerTrigger(
 	    'ccbusca::parser',
 	    'refin',
 	    function (ref, cb) {
@@ -1653,9 +1654,9 @@
 	      );
 	      result.addItem().prepend(refinButton);
 	    }
-	  );
+	  ); }
 
-	  controller.registerTrigger(
+	  if (systemTags.indexOf('no-score-boa-vista') === -1) { controller.registerTrigger(
 	    'ccbusca::parser',
 	    'score',
 	    function (ref, cb) {
@@ -1682,9 +1683,9 @@
 	      );
 	      result.addItem().prepend(scoreButton);
 	    }
-	  );
+	  ); }
 
-	  controller.registerTrigger(
+	  if (systemTags.indexOf('no-consulta-pefin-refin-serasa') === -1) { controller.registerTrigger(
 	    'ccbusca::parser',
 	    'serasa',
 	    function (ref, cb) {
@@ -1710,7 +1711,7 @@
 	      );
 	      result.addItem().prepend(serasaButton);
 	    }
-	  );
+	  ); }
 	});
 
 }(harlan, $, numeral));

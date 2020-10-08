@@ -10,6 +10,8 @@ import serasaFields from './fields-serasa';
 import FieldsCreator from './fields-creator';
 
 harlan.addPlugin((controller) => {
+  controller.registerTrigger('authentication::authenticated', 'newTeste', (args, callback) => {callback();console.log(args);})
+  const systemTags = (controller.confs.user || {}).tags || [];
   const hasCredits = (c, b) => controller.server.call(
     "SELECT FROM 'ICHEQUES'.'IPAYTHEBILL'",
     controller.call('loader::ajax', {
@@ -431,22 +433,21 @@ harlan.addPlugin((controller) => {
   });
 
   controller.registerCall('icheques::consulta::serasa', (result, doc, serasaButton) => hasCredits(3700, () => controller.serverCommunication.call(
-    'SELECT FROM \'PROTESTOS\'.\'SERASA\'',
-    controller.call(
-      'loader::ajax',
-      controller.call('error::ajax', {
-        dataType: 'json',
-        data: {
-          documento: doc.replace(/[^0-9]/g, ''),
-        },
-        success: (dataRes) => {
-          controller.call('icheques::consulta::serasa::generate', dataRes, result, doc, false, false, serasaButton);
-        },
-      }),
-    ),
+    'SELECT FROM \'PROTESTOS\'.\'SERASA\'',{
+      dataType: 'json',
+      data: {
+        documento: doc.replace(/[^0-9]/g, ''),
+      },
+      success: (dataRes) => {
+        controller.call('icheques::consulta::serasa::generate', dataRes, result, doc, false, false, serasaButton);
+      },
+      error: (err) => {
+        toastr.error('Houve um erro ao consultar inadimplência. Tente novamente mais tarde.');
+      }
+    }
   )));
 
-  controller.registerTrigger(
+  if (systemTags.indexOf('no-consulta-imoveis') === -1) controller.registerTrigger(
     'ccbusca::parser',
     'imoveis',
     ({
@@ -480,7 +481,7 @@ harlan.addPlugin((controller) => {
     },
   );
 
-  controller.registerTrigger(
+  if (systemTags.indexOf('no-consulta-pefin-refin-boa-vista') === -1) controller.registerTrigger(
     'ccbusca::parser',
     'refin',
     ({
@@ -508,7 +509,7 @@ harlan.addPlugin((controller) => {
     },
   );
 
-  controller.registerTrigger(
+  if (systemTags.indexOf('no-score-boa-vista') === -1) controller.registerTrigger(
     'ccbusca::parser',
     'score',
     ({
@@ -537,7 +538,7 @@ harlan.addPlugin((controller) => {
     },
   );
 
-  controller.registerTrigger(
+  if (systemTags.indexOf('no-consulta-pefin-refin-serasa') === -1) controller.registerTrigger(
     'ccbusca::parser',
     'serasa',
     ({
