@@ -1509,11 +1509,6 @@
 	      console.log(e);
 	    }
 
-	    var formatter = (new Intl.NumberFormat('pt-BR', {
-	      style: 'currency',
-	      currency: 'BRL',
-	    }));
-
 	    if (serasaButton != null) { serasaButton.remove(); }
 
 	    var fieldsCreator = new FieldsCreator();
@@ -1548,11 +1543,6 @@
 	        paragraph: ("Para o documento " + (cpf_cnpj_1.isValid(doc) ? cpf_cnpj_1.format(doc) : cpf_cnpj_2.format(doc)) + " não foram encontrados registros de restrições."),
 	      }); }
 	    } else {
-	      data.forEach(function (ocorrencia) {
-	        ocorrencia.valor = formatter.format(ocorrencia.valor);
-	        ocorrencia.totalvalor = formatter.format(ocorrencia.totalvalor);
-	      });
-
 	      var separatorElement$1 = result.addSeparator(
 	        'Restrições Serasa',
 	        'Apontamentos e Restrições Financeiras e Comerciais',

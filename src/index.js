@@ -401,11 +401,6 @@ harlan.addPlugin((controller) => {
         } não foram encontrados registros de restrições.`,
       });
     } else {
-      data.forEach((ocorrencia) => {
-        ocorrencia.valor = formatter.format(ocorrencia.valor);
-        ocorrencia.totalvalor = formatter.format(ocorrencia.totalvalor);
-      });
-
       const separatorElement = result.addSeparator(
         'Restrições Serasa',
         'Apontamentos e Restrições Financeiras e Comerciais',
