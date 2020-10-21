@@ -1397,7 +1397,7 @@
 	      return;
 	    }
 
-	    newData.spc.forEach(function (spc) {
+	    newData.spc[0].forEach(function (spc) {
 	      var separatorElement = result
 	        .addSeparator(
 	          'Restrição no Refin/Pefin',
@@ -1582,8 +1582,7 @@
 	      }
 	    }
 	  ); }); });
-
-	  if (systemTags.indexOf('no-consulta-imoveis') === -1) { controller.registerTrigger(
+	  if(systemTags.indexOf('no-consulta-imoveis') === -1) { controller.registerTrigger(
 	    'ccbusca::parser',
 	    'imoveis',
 	    function (ref, cb) {

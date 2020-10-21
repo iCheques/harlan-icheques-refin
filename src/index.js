@@ -254,7 +254,7 @@ harlan.addPlugin((controller) => {
       return;
     }
 
-    newData.spc.forEach((spc) => {
+    newData.spc[0].forEach((spc) => {
       const separatorElement = result
         .addSeparator(
           'Restrição no Refin/Pefin',
@@ -440,8 +440,7 @@ harlan.addPlugin((controller) => {
       }
     }
   )));
-
-  if (systemTags.indexOf('no-consulta-imoveis') === -1) controller.registerTrigger(
+  if(systemTags.indexOf('no-consulta-imoveis') === -1) controller.registerTrigger(
     'ccbusca::parser',
     'imoveis',
     ({
