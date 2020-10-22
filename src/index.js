@@ -254,6 +254,11 @@ harlan.addPlugin((controller) => {
       return;
     }
 
+    const formatter = (new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+    }));
+
     newData.spc[0].forEach((spc) => {
       const separatorElement = result
         .addSeparator(

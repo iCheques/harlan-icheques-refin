@@ -1397,6 +1397,11 @@
 	      return;
 	    }
 
+	    var formatter = (new Intl.NumberFormat('pt-BR', {
+	      style: 'currency',
+	      currency: 'BRL',
+	    }));
+
 	    newData.spc[0].forEach(function (spc) {
 	      var separatorElement = result
 	        .addSeparator(
