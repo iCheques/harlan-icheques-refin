@@ -445,7 +445,7 @@ harlan.addPlugin((controller) => {
       }
     }
   )));
-  if(systemTags.indexOf('no-consulta-imoveis') === -1) controller.registerTrigger(
+  controller.registerTrigger(
     'ccbusca::parser',
     'imoveis',
     ({
@@ -454,6 +454,7 @@ harlan.addPlugin((controller) => {
     }, cb) => {
       if (CNPJ.isValid(doc)) return;
       let imoveisButton = null;
+      const consultaImoveisLiberada = systemTags.indexOf('no-imóveis') === -1;
       imoveisButton = $('<button />')
         .text('Consultar Imóveis SP Capital')
         .addClass('button')
@@ -466,20 +467,29 @@ harlan.addPlugin((controller) => {
             }),
         );
 
-      imoveisButton.click(
-        controller.click(
-          'icheques::consulta::imoveis',
-          result,
-          doc,
-          imoveisButton,
-        ),
-      );
+      if (consultaImoveisLiberada) {
+        imoveisButton.click(
+          controller.click(
+            'icheques::consulta::imoveis',
+            result,
+            doc,
+            imoveisButton,
+          ),
+        );
+      } else {
+        imoveisButton.on('click', ev => {
+          ev.preventDefault();
+          controller.call('blockedOperation', 'imóveis');
+        })
+      }
+
+      
       result.addItem().prepend(imoveisButton);
       cb();
     },
   );
 
-  if (systemTags.indexOf('no-consulta-pefin-refin-boa-vista') === -1) controller.registerTrigger(
+  controller.registerTrigger(
     'ccbusca::parser',
     'refin',
     ({
@@ -488,6 +498,7 @@ harlan.addPlugin((controller) => {
     }, cb) => {
       cb();
       let refinButton = null;
+      const consultaRefinBoaVistaLiberada = systemTags.indexOf('no-consulta-pefin-refin-boa-vista') === -1;
       refinButton = $('<button />')
         .text('Consultar Pefin/Refin Boa Vista')
         .addClass('button')
@@ -500,14 +511,21 @@ harlan.addPlugin((controller) => {
             }),
         );
 
-      refinButton.click(
-        controller.click('icheques::consulta::refin', result, doc, refinButton),
-      );
+      if (consultaRefinBoaVistaLiberada) {
+        refinButton.click(
+          controller.click('icheques::consulta::refin', result, doc, refinButton),
+        );
+      } else {
+        refinButton.on('click', ev => {
+          ev.preventDefault();
+          controller.call('blockedOperation', 'consulta-pefin-refin-boa-vista');
+        });
+      }
       result.addItem().prepend(refinButton);
     },
   );
 
-  if (systemTags.indexOf('no-score-boa-vista') === -1) controller.registerTrigger(
+  controller.registerTrigger(
     'ccbusca::parser',
     'score',
     ({
@@ -517,6 +535,7 @@ harlan.addPlugin((controller) => {
       if (CNPJ.isValid(doc)) return;
       cb();
       let scoreButton = null;
+      const consultaScoreBoaVistaLiberada = systemTags.indexOf('no-score-boa-vista') === -1;
       scoreButton = $('<button />')
         .text('Consultar Score Boa Vista')
         .addClass('button')
@@ -529,14 +548,21 @@ harlan.addPlugin((controller) => {
             }),
         );
 
-      scoreButton.click(
-        controller.click('icheques::consulta::score', result, doc, scoreButton),
-      );
+      if (consultaScoreBoaVistaLiberada){
+        scoreButton.click(
+          controller.click('icheques::consulta::score', result, doc, scoreButton),
+        );
+      } else {
+        scoreButton.on('click', ev => { 
+          ev.preventDefault();
+          controller.call('blockedOperation', 'score-boa-vista');
+        });
+      }
       result.addItem().prepend(scoreButton);
     },
   );
 
-  if (systemTags.indexOf('no-consulta-pefin-refin-serasa') === -1) controller.registerTrigger(
+  controller.registerTrigger(
     'ccbusca::parser',
     'serasa',
     ({
@@ -545,6 +571,7 @@ harlan.addPlugin((controller) => {
     }, cb) => {
       cb();
       let serasaButton = null;
+      const consultaPefinSerasaLiberada = systemTags.indexOf('no-consulta-pefin-refin-serasa') === -1;
       serasaButton = $('<button />')
         .text('Consultar Pefin/Refin Serasa')
         .addClass('button')
@@ -557,9 +584,16 @@ harlan.addPlugin((controller) => {
             }),
         );
 
-      serasaButton.click(
-        controller.click('icheques::consulta::serasa', result, doc, serasaButton),
-      );
+      if(consultaPefinSerasaLiberada) {
+        serasaButton.click(
+          controller.click('icheques::consulta::serasa', result, doc, serasaButton),
+        );
+      } else {
+        serasaButton.on('click', ev => {
+          ev.preventDefault();
+          controller.call('blockedOperation', 'consulta-pefin-refin-serasa');
+        });
+      }
       result.addItem().prepend(serasaButton);
     },
   );

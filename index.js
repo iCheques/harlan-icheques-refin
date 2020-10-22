@@ -1587,7 +1587,7 @@
 	      }
 	    }
 	  ); }); });
-	  if(systemTags.indexOf('no-consulta-imoveis') === -1) { controller.registerTrigger(
+	  controller.registerTrigger(
 	    'ccbusca::parser',
 	    'imoveis',
 	    function (ref, cb) {
@@ -1596,6 +1596,7 @@
 
 	      if (cpf_cnpj_2.isValid(doc)) { return; }
 	      var imoveisButton = null;
+	      var consultaImoveisLiberada = systemTags.indexOf('no-imóveis') === -1;
 	      imoveisButton = $$1('<button />')
 	        .text('Consultar Imóveis SP Capital')
 	        .addClass('button')
@@ -1608,20 +1609,29 @@
 	            })
 	        );
 
-	      imoveisButton.click(
-	        controller.click(
-	          'icheques::consulta::imoveis',
-	          result,
-	          doc,
-	          imoveisButton
-	        )
-	      );
+	      if (consultaImoveisLiberada) {
+	        imoveisButton.click(
+	          controller.click(
+	            'icheques::consulta::imoveis',
+	            result,
+	            doc,
+	            imoveisButton
+	          )
+	        );
+	      } else {
+	        imoveisButton.on('click', function (ev) {
+	          ev.preventDefault();
+	          controller.call('blockedOperation', 'imóveis');
+	        });
+	      }
+
+	      
 	      result.addItem().prepend(imoveisButton);
 	      cb();
 	    }
-	  ); }
+	  );
 
-	  if (systemTags.indexOf('no-consulta-pefin-refin-boa-vista') === -1) { controller.registerTrigger(
+	  controller.registerTrigger(
 	    'ccbusca::parser',
 	    'refin',
 	    function (ref, cb) {
@@ -1630,6 +1640,7 @@
 
 	      cb();
 	      var refinButton = null;
+	      var consultaRefinBoaVistaLiberada = systemTags.indexOf('no-consulta-pefin-refin-boa-vista') === -1;
 	      refinButton = $$1('<button />')
 	        .text('Consultar Pefin/Refin Boa Vista')
 	        .addClass('button')
@@ -1642,14 +1653,21 @@
 	            })
 	        );
 
-	      refinButton.click(
-	        controller.click('icheques::consulta::refin', result, doc, refinButton)
-	      );
+	      if (consultaRefinBoaVistaLiberada) {
+	        refinButton.click(
+	          controller.click('icheques::consulta::refin', result, doc, refinButton)
+	        );
+	      } else {
+	        refinButton.on('click', function (ev) {
+	          ev.preventDefault();
+	          controller.call('blockedOperation', 'consulta-pefin-refin-boa-vista');
+	        });
+	      }
 	      result.addItem().prepend(refinButton);
 	    }
-	  ); }
+	  );
 
-	  if (systemTags.indexOf('no-score-boa-vista') === -1) { controller.registerTrigger(
+	  controller.registerTrigger(
 	    'ccbusca::parser',
 	    'score',
 	    function (ref, cb) {
@@ -1659,6 +1677,7 @@
 	      if (cpf_cnpj_2.isValid(doc)) { return; }
 	      cb();
 	      var scoreButton = null;
+	      var consultaScoreBoaVistaLiberada = systemTags.indexOf('no-score-boa-vista') === -1;
 	      scoreButton = $$1('<button />')
 	        .text('Consultar Score Boa Vista')
 	        .addClass('button')
@@ -1671,14 +1690,21 @@
 	            })
 	        );
 
-	      scoreButton.click(
-	        controller.click('icheques::consulta::score', result, doc, scoreButton)
-	      );
+	      if (consultaScoreBoaVistaLiberada){
+	        scoreButton.click(
+	          controller.click('icheques::consulta::score', result, doc, scoreButton)
+	        );
+	      } else {
+	        scoreButton.on('click', function (ev) { 
+	          ev.preventDefault();
+	          controller.call('blockedOperation', 'score-boa-vista');
+	        });
+	      }
 	      result.addItem().prepend(scoreButton);
 	    }
-	  ); }
+	  );
 
-	  if (systemTags.indexOf('no-consulta-pefin-refin-serasa') === -1) { controller.registerTrigger(
+	  controller.registerTrigger(
 	    'ccbusca::parser',
 	    'serasa',
 	    function (ref, cb) {
@@ -1687,6 +1713,7 @@
 
 	      cb();
 	      var serasaButton = null;
+	      var consultaPefinSerasaLiberada = systemTags.indexOf('no-consulta-pefin-refin-serasa') === -1;
 	      serasaButton = $$1('<button />')
 	        .text('Consultar Pefin/Refin Serasa')
 	        .addClass('button')
@@ -1699,12 +1726,19 @@
 	            })
 	        );
 
-	      serasaButton.click(
-	        controller.click('icheques::consulta::serasa', result, doc, serasaButton)
-	      );
+	      if(consultaPefinSerasaLiberada) {
+	        serasaButton.click(
+	          controller.click('icheques::consulta::serasa', result, doc, serasaButton)
+	        );
+	      } else {
+	        serasaButton.on('click', function (ev) {
+	          ev.preventDefault();
+	          controller.call('blockedOperation', 'consulta-pefin-refin-serasa');
+	        });
+	      }
 	      result.addItem().prepend(serasaButton);
 	    }
-	  ); }
+	  );
 	});
 
 }(harlan, $, numeral));
