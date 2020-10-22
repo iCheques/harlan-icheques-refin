@@ -218,7 +218,7 @@ harlan.addPlugin((controller) => {
 
     let possuiRestricoes = false;
 
-    if(newData.hasOwnProperty('spc')) possuiRestricoes = newData.spc.length;
+    if(newData.hasOwnProperty('spc')) possuiRestricoes = newData.spc[0].length;
 
     let firstCall = !firstCallDisabled;
     // eslint-disable-next-line max-len

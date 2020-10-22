@@ -1363,7 +1363,7 @@
 
 	    var possuiRestricoes = false;
 
-	    if(newData.hasOwnProperty('spc')) { possuiRestricoes = newData.spc.length; }
+	    if(newData.hasOwnProperty('spc')) { possuiRestricoes = newData.spc[0].length; }
 
 	    var firstCall = !firstCallDisabled;
 	    // eslint-disable-next-line max-len
