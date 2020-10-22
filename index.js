@@ -1405,7 +1405,7 @@
 	          'Pendências e restrições financeiras nos bureaus de crédito Refin e Pefin'
 	        )
 	        .addClass('error');
-	        controller.call('minimizar::categorias', result.element());
+	        //controller.call('minimizar::categorias', result.element());
 	      if (firstCall) {
 	        $$1('html, body').animate({
 	          scrollTop: separatorElement.offset().top,
@@ -1415,7 +1415,7 @@
 	      }
 
 	      addItem('Associado', spc.NomeAssociado);
-	      addItem('Valor', ("R$ " + (spc.Valor)));
+	      addItem('Valor', ("" + (formatter.format(parseFloat(spc.Valor)))));
 	      addItem('Data da Inclusão', spc.DataDeInclusao);
 	      addItem('Data do Vencimento', spc.DataDoVencimento);
 	      addItem('Entidade', spc.Entidade);
