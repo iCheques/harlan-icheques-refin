@@ -154,7 +154,7 @@ harlan.addPlugin((controller) => {
   );
 
   controller.registerCall('icheques::consulta::score::generate', (dataRes, result, doc, alertDisabled = false, firstCallDisabled = false, scoreButton = null) => {
-    const data = JSON.parse(dataRes);
+    const data = dataRes;
     if (!data.hasOwnProperty('score')) return;
     const score = data.score[0];
     

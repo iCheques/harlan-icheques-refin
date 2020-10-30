@@ -1,9 +1,9 @@
 (function (harlan, $$1, numeral) {
 	'use strict';
 
-	harlan = harlan && Object.prototype.hasOwnProperty.call(harlan, 'default') ? harlan['default'] : harlan;
-	$$1 = $$1 && Object.prototype.hasOwnProperty.call($$1, 'default') ? $$1['default'] : $$1;
-	numeral = numeral && Object.prototype.hasOwnProperty.call(numeral, 'default') ? numeral['default'] : numeral;
+	harlan = harlan && harlan.hasOwnProperty('default') ? harlan['default'] : harlan;
+	$$1 = $$1 && $$1.hasOwnProperty('default') ? $$1['default'] : $$1;
+	numeral = numeral && numeral.hasOwnProperty('default') ? numeral['default'] : numeral;
 
 	var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
@@ -1295,7 +1295,7 @@
 	    if ( firstCallDisabled === void 0 ) firstCallDisabled = false;
 	    if ( scoreButton === void 0 ) scoreButton = null;
 
-	    var data = JSON.parse(dataRes);
+	    var data = dataRes;
 	    if (!data.hasOwnProperty('score')) { return; }
 	    var score = data.score[0];
 	    
