@@ -139,16 +139,18 @@ harlan.addPlugin((controller) => {
       "SELECT FROM 'IMOVEIS'.'CONSULTA'",
       controller.call(
         'loader::ajax',
-        controller.call('error::ajax', {
+        {
           dataType: 'json',
           data: {
             documento: doc.replace(/[^0-9]/g, ''),
           },
-
+          error: () => {
+            toastr.error('Houve um erro ao consultar imóveis. O valor da consulta já foi estornado, por favor, tente mais tarde.')
+          },
           success: (data) => {
             controller.call('icheques::consulta::imoveis::generate', data, result, doc, false, false, imoveisButton);
           },
-        }),
+        },
       ),
     )),
   );
@@ -191,15 +193,18 @@ harlan.addPlugin((controller) => {
     'SELECT FROM \'SPCNet\'.\'ScoreBoaVista\'',
     controller.call(
       'loader::ajax',
-      controller.call('error::ajax', {
+       {
         dataType: 'json',
         data: {
           documento: doc.replace(/[^0-9]/g, ''),
         },
+        error: () => {
+          toastr.error('Houve um erro ao consultar o Score. O valor da consulta já foi estornado, por favor, tente mais tarde.')
+        },
         success: (dataRes) => {
           controller.call('icheques::consulta::score::generate', dataRes, result, doc, false, false, scoreButton);
         },
-      }),
+      },
     ),
   )));
 
@@ -334,16 +339,18 @@ harlan.addPlugin((controller) => {
         endpointCall,
         controller.call(
           'loader::ajax',
-          controller.call('error::ajax', {
+          {
             dataType: 'json',
             data: {
               documento: doc.replace(/[^0-9]/g, ''),
             },
-
+            error: () => {
+              toastr.error('Houve um erro ao consultar a inadimplência. O valor da consulta já foi estornado, por favor, tente mais tarde.')
+            },
             success: (data) => {
               controller.call('icheques::consulta::refin::generate', data, result, doc, false, false, refinButton);
             },
-          }),
+          },
         ),
       ));
     },
