@@ -28,7 +28,7 @@ harlan.addPlugin((controller) => {
   );
 
   controller.registerCall('icheques::consulta::imoveis::generate', (data, result, doc, alertDisabled = false, firstCallDisabled = false, imoveisButton = null) => {
-    if (!$.isEmptyObject(imoveisButton)) { 
+    if (!$.isEmptyObject(imoveisButton)) {
       imoveisButton.parent();
       imoveisButton.remove();
     }
@@ -38,7 +38,7 @@ harlan.addPlugin((controller) => {
     const objectData = JSON.parse(data);
 
     if ($.isEmptyObject(objectData)) return;
-    
+
     const iptus = objectData.IPTUS;
 
     if (iptus === undefined || iptus.length === 0) {
@@ -93,7 +93,7 @@ harlan.addPlugin((controller) => {
               ? `${numeral(iptu.AREA.TOTAL).format()} m²`
               : null,
           ) : '';
-          
+
           iptu.AREA.hasOwnProperty('CONSTRUIDA') ? addItem(
             'Área Construída',
             iptu.AREA.CONSTRUIDA
@@ -156,12 +156,12 @@ harlan.addPlugin((controller) => {
   );
 
   controller.registerCall('icheques::consulta::score::generate', (dataRes, result, doc, alertDisabled = false, firstCallDisabled = false, scoreButton = null) => {
-    const data = JSON.parse(dataRes);
+    const data = dataRes;
     if (!data.hasOwnProperty('score')) return;
     const score = data.score[0];
-    
-    if(scoreButton != null) scoreButton.remove();
-    
+
+    if (scoreButton != null) scoreButton.remove();
+
     const addItem = (name, value, after) => value && result.addItem(name, value, undefined, after);
     let firstCall = !firstCallDisabled;
     const separatorElement = result
@@ -180,20 +180,22 @@ harlan.addPlugin((controller) => {
     }
     addItem('Score', score.score);
     addItem('Probabilidade de Inadimplência', score.provavel);
-    addItem('Classificação', score.classificacao);
+    if (!CNPJ.isValid(doc)) addItem('Classificação', score.classificacao);
     addItem('Análise', score.texto);
-    addItem('Status', score.status);
-
-    console.log('Antes de minimizar', result);
+    if (!CNPJ.isValid(doc)) addItem('Status', score.status);
+    if (CNPJ.isValid(doc)) {
+      addItem('Classificação Númerica', score.classificacao_numerica);
+      addItem('Classificação Alfabética', score.classificacao_alfabetica);
+    }
 
     controller.call('minimizar::categorias', result.element());
   });
 
-  controller.registerCall('icheques::consulta::score', (result, doc, scoreButton) => hasCredits(3000, () => controller.serverCommunication.call(
+  controller.registerCall('icheques::consulta::score', (result, doc, scoreButton) => hasCredits(CNPJ.isValid(doc) ? 6000 : 3700, () => controller.serverCommunication.call(
     'SELECT FROM \'SPCNet\'.\'ScoreBoaVista\'',
     controller.call(
       'loader::ajax',
-       {
+      {
         dataType: 'json',
         data: {
           documento: doc.replace(/[^0-9]/g, ''),
@@ -215,7 +217,7 @@ harlan.addPlugin((controller) => {
 
     try {
       newData = JSON.parse(data);
-    } catch(e) {
+    } catch (e) {
       newData = data;
     }
 
@@ -223,7 +225,7 @@ harlan.addPlugin((controller) => {
 
     let possuiRestricoes = false;
 
-    if(newData.hasOwnProperty('spc')) possuiRestricoes = newData.spc[0].length;
+    if (newData.hasOwnProperty('spc')) possuiRestricoes = newData.spc[0].length;
 
     let firstCall = !firstCallDisabled;
     // eslint-disable-next-line max-len
@@ -247,14 +249,16 @@ harlan.addPlugin((controller) => {
 
       controller.call('minimizar::categorias', result.element());
 
-      if(!alertDisabled) controller.call('alert', {
-        icon: 'pass',
-        title: 'Não há Pefin/Refin Boa Vista no Target',
-        subtitle: 'O sistema encontrou 0 ocorrências de Pefin/Refin para o documento informado.',
-        paragraph: `Para o documento ${
-          CPF.isValid(doc) ? CPF.format(doc) : CNPJ.format(doc)
-        } não foram encontrados registros de Refin/Pefin.`,
-      });
+      if (!alertDisabled) {
+        controller.call('alert', {
+          icon: 'pass',
+          title: 'Não há Pefin/Refin Boa Vista no Target',
+          subtitle: 'O sistema encontrou 0 ocorrências de Pefin/Refin para o documento informado.',
+          paragraph: `Para o documento ${
+            CPF.isValid(doc) ? CPF.format(doc) : CNPJ.format(doc)
+          } não foram encontrados registros de Refin/Pefin.`,
+        });
+      }
 
       return;
     }
@@ -272,7 +276,7 @@ harlan.addPlugin((controller) => {
           'Pendências e restrições financeiras nos bureaus de crédito Refin e Pefin',
         )
         .addClass('error');
-        //controller.call('minimizar::categorias', result.element());
+        // controller.call('minimizar::categorias', result.element());
       if (firstCall) {
         $('html, body').animate({
           scrollTop: separatorElement.offset().top,
@@ -357,7 +361,7 @@ harlan.addPlugin((controller) => {
   );
 
   controller.registerCall('icheques::consulta::serasa::generate', (dataRes, result, doc, alertDisabled = false, firstCallDisabled = false, serasaButton = null) => {
-    if($.isEmptyObject(dataRes)) return;
+    if ($.isEmptyObject(dataRes)) return;
     let data;
 
     try {
@@ -402,16 +406,18 @@ harlan.addPlugin((controller) => {
       addItem('Informação', `Para o documento ${CPF.isValid(doc) ? CPF.format(doc) : CNPJ.format(doc)} não foram encontrados registros de restrições.`);
       result.element().append(fieldsCreator.element());
 
-      controller.call('minimizar::categorias', result.element())
-      
-      if (!alertDisabled) controller.call('alert', {
-        icon: 'pass',
-        title: 'Não há Restrições Serasa no Target',
-        subtitle: 'O sistema encontrou 0 ocorrências de Restrições Serasa para o documento informado.',
-        paragraph: `Para o documento ${
-          CPF.isValid(doc) ? CPF.format(doc) : CNPJ.format(doc)
-        } não foram encontrados registros de restrições.`,
-      });
+      controller.call('minimizar::categorias', result.element());
+
+      if (!alertDisabled) {
+        controller.call('alert', {
+          icon: 'pass',
+          title: 'Não há Restrições Serasa no Target',
+          subtitle: 'O sistema encontrou 0 ocorrências de Restrições Serasa para o documento informado.',
+          paragraph: `Para o documento ${
+            CPF.isValid(doc) ? CPF.format(doc) : CNPJ.format(doc)
+          } não foram encontrados registros de restrições.`,
+        });
+      }
     } else {
       const separatorElement = result.addSeparator(
         'Restrições Serasa',
@@ -434,12 +440,12 @@ harlan.addPlugin((controller) => {
         fieldsCreator.resetFields();
       });
 
-      controller.call('minimizar::categorias', result.element())
+      controller.call('minimizar::categorias', result.element());
     }
   });
 
   controller.registerCall('icheques::consulta::serasa', (result, doc, serasaButton) => hasCredits(3700, () => controller.serverCommunication.call(
-    'SELECT FROM \'PROTESTOS\'.\'SERASA\'',{
+    'SELECT FROM \'PROTESTOS\'.\'SERASA\'', {
       dataType: 'json',
       data: {
         documento: doc.replace(/[^0-9]/g, ''),
@@ -449,8 +455,8 @@ harlan.addPlugin((controller) => {
       },
       error: (err) => {
         toastr.error('Houve um erro ao consultar inadimplência. Tente novamente mais tarde.');
-      }
-    }
+      },
+    },
   )));
   controller.registerTrigger(
     'ccbusca::parser',
@@ -484,13 +490,13 @@ harlan.addPlugin((controller) => {
           ),
         );
       } else {
-        imoveisButton.on('click', ev => {
+        imoveisButton.on('click', (ev) => {
           ev.preventDefault();
           controller.call('blockedOperation', 'imóveis');
-        })
+        });
       }
 
-      
+
       result.addItem().prepend(imoveisButton);
       cb();
     },
@@ -523,7 +529,7 @@ harlan.addPlugin((controller) => {
           controller.click('icheques::consulta::refin', result, doc, refinButton),
         );
       } else {
-        refinButton.on('click', ev => {
+        refinButton.on('click', (ev) => {
           ev.preventDefault();
           controller.call('blockedOperation', 'consulta-pefin-refin-boa-vista');
         });
@@ -539,7 +545,6 @@ harlan.addPlugin((controller) => {
       result,
       doc,
     }, cb) => {
-      if (CNPJ.isValid(doc)) return;
       cb();
       let scoreButton = null;
       const consultaScoreBoaVistaLiberada = systemTags.indexOf('no-score-boa-vista') === -1;
@@ -548,19 +553,19 @@ harlan.addPlugin((controller) => {
         .addClass('button')
         .append(
           $('<small />')
-            .text('CPF Somente - R$ 3,00')
+            .text('CPF R$ 3,00 / CNPJ R$ 6,00')
             .css({
               display: 'block',
               'font-size': '9px',
             }),
         );
 
-      if (consultaScoreBoaVistaLiberada){
+      if (consultaScoreBoaVistaLiberada) {
         scoreButton.click(
           controller.click('icheques::consulta::score', result, doc, scoreButton),
         );
       } else {
-        scoreButton.on('click', ev => { 
+        scoreButton.on('click', (ev) => {
           ev.preventDefault();
           controller.call('blockedOperation', 'score-boa-vista');
         });
@@ -591,12 +596,12 @@ harlan.addPlugin((controller) => {
             }),
         );
 
-      if(consultaPefinSerasaLiberada) {
+      if (consultaPefinSerasaLiberada) {
         serasaButton.click(
           controller.click('icheques::consulta::serasa', result, doc, serasaButton),
         );
       } else {
-        serasaButton.on('click', ev => {
+        serasaButton.on('click', (ev) => {
           ev.preventDefault();
           controller.call('blockedOperation', 'consulta-pefin-refin-serasa');
         });

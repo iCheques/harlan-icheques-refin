@@ -1168,7 +1168,7 @@
 	    if ( firstCallDisabled === void 0 ) firstCallDisabled = false;
 	    if ( imoveisButton === void 0 ) imoveisButton = null;
 
-	    if (!$$1.isEmptyObject(imoveisButton)) { 
+	    if (!$$1.isEmptyObject(imoveisButton)) {
 	      imoveisButton.parent();
 	      imoveisButton.remove();
 	    }
@@ -1178,7 +1178,7 @@
 	    var objectData = JSON.parse(data);
 
 	    if ($$1.isEmptyObject(objectData)) { return; }
-	    
+
 	    var iptus = objectData.IPTUS;
 
 	    if (iptus === undefined || iptus.length === 0) {
@@ -1231,7 +1231,7 @@
 	              ? ((numeral(iptu.AREA.TOTAL).format()) + " m²")
 	              : null
 	          ) : '';
-	          
+
 	          iptu.AREA.hasOwnProperty('CONSTRUIDA') ? addItem(
 	            'Área Construída',
 	            iptu.AREA.CONSTRUIDA
@@ -1297,12 +1297,12 @@
 	    if ( firstCallDisabled === void 0 ) firstCallDisabled = false;
 	    if ( scoreButton === void 0 ) scoreButton = null;
 
-	    var data = JSON.parse(dataRes);
+	    var data = dataRes;
 	    if (!data.hasOwnProperty('score')) { return; }
 	    var score = data.score[0];
-	    
-	    if(scoreButton != null) { scoreButton.remove(); }
-	    
+
+	    if (scoreButton != null) { scoreButton.remove(); }
+
 	    var addItem = function (name, value, after) { return value && result.addItem(name, value, undefined, after); };
 	    var firstCall = !firstCallDisabled;
 	    var separatorElement = result
@@ -1321,20 +1321,22 @@
 	    }
 	    addItem('Score', score.score);
 	    addItem('Probabilidade de Inadimplência', score.provavel);
-	    addItem('Classificação', score.classificacao);
+	    if (!cpf_cnpj_2.isValid(doc)) { addItem('Classificação', score.classificacao); }
 	    addItem('Análise', score.texto);
-	    addItem('Status', score.status);
-
-	    console.log('Antes de minimizar', result);
+	    if (!cpf_cnpj_2.isValid(doc)) { addItem('Status', score.status); }
+	    if (cpf_cnpj_2.isValid(doc)) {
+	      addItem('Classificação Númerica', score.classificacao_numerica);
+	      addItem('Classificação Alfabética', score.classificacao_alfabetica);
+	    }
 
 	    controller.call('minimizar::categorias', result.element());
 	  });
 
-	  controller.registerCall('icheques::consulta::score', function (result, doc, scoreButton) { return hasCredits(3000, function () { return controller.serverCommunication.call(
+	  controller.registerCall('icheques::consulta::score', function (result, doc, scoreButton) { return hasCredits(cpf_cnpj_2.isValid(doc) ? 6000 : 3700, function () { return controller.serverCommunication.call(
 	    'SELECT FROM \'SPCNet\'.\'ScoreBoaVista\'',
 	    controller.call(
 	      'loader::ajax',
-	       {
+	      {
 	        dataType: 'json',
 	        data: {
 	          documento: doc.replace(/[^0-9]/g, ''),
@@ -1360,7 +1362,7 @@
 
 	    try {
 	      newData = JSON.parse(data);
-	    } catch(e) {
+	    } catch (e) {
 	      newData = data;
 	    }
 
@@ -1368,7 +1370,7 @@
 
 	    var possuiRestricoes = false;
 
-	    if(newData.hasOwnProperty('spc')) { possuiRestricoes = newData.spc[0].length; }
+	    if (newData.hasOwnProperty('spc')) { possuiRestricoes = newData.spc[0].length; }
 
 	    var firstCall = !firstCallDisabled;
 	    // eslint-disable-next-line max-len
@@ -1392,12 +1394,14 @@
 
 	      controller.call('minimizar::categorias', result.element());
 
-	      if(!alertDisabled) { controller.call('alert', {
-	        icon: 'pass',
-	        title: 'Não há Pefin/Refin Boa Vista no Target',
-	        subtitle: 'O sistema encontrou 0 ocorrências de Pefin/Refin para o documento informado.',
-	        paragraph: ("Para o documento " + (cpf_cnpj_1.isValid(doc) ? cpf_cnpj_1.format(doc) : cpf_cnpj_2.format(doc)) + " não foram encontrados registros de Refin/Pefin."),
-	      }); }
+	      if (!alertDisabled) {
+	        controller.call('alert', {
+	          icon: 'pass',
+	          title: 'Não há Pefin/Refin Boa Vista no Target',
+	          subtitle: 'O sistema encontrou 0 ocorrências de Pefin/Refin para o documento informado.',
+	          paragraph: ("Para o documento " + (cpf_cnpj_1.isValid(doc) ? cpf_cnpj_1.format(doc) : cpf_cnpj_2.format(doc)) + " não foram encontrados registros de Refin/Pefin."),
+	        });
+	      }
 
 	      return;
 	    }
@@ -1415,7 +1419,7 @@
 	          'Pendências e restrições financeiras nos bureaus de crédito Refin e Pefin'
 	        )
 	        .addClass('error');
-	        //controller.call('minimizar::categorias', result.element());
+	        // controller.call('minimizar::categorias', result.element());
 	      if (firstCall) {
 	        $$1('html, body').animate({
 	          scrollTop: separatorElement.offset().top,
@@ -1506,7 +1510,7 @@
 	    if ( firstCallDisabled === void 0 ) firstCallDisabled = false;
 	    if ( serasaButton === void 0 ) serasaButton = null;
 
-	    if($$1.isEmptyObject(dataRes)) { return; }
+	    if ($$1.isEmptyObject(dataRes)) { return; }
 	    var data;
 
 	    try {
@@ -1547,13 +1551,15 @@
 	      result.element().append(fieldsCreator.element());
 
 	      controller.call('minimizar::categorias', result.element());
-	      
-	      if (!alertDisabled) { controller.call('alert', {
-	        icon: 'pass',
-	        title: 'Não há Restrições Serasa no Target',
-	        subtitle: 'O sistema encontrou 0 ocorrências de Restrições Serasa para o documento informado.',
-	        paragraph: ("Para o documento " + (cpf_cnpj_1.isValid(doc) ? cpf_cnpj_1.format(doc) : cpf_cnpj_2.format(doc)) + " não foram encontrados registros de restrições."),
-	      }); }
+
+	      if (!alertDisabled) {
+	        controller.call('alert', {
+	          icon: 'pass',
+	          title: 'Não há Restrições Serasa no Target',
+	          subtitle: 'O sistema encontrou 0 ocorrências de Restrições Serasa para o documento informado.',
+	          paragraph: ("Para o documento " + (cpf_cnpj_1.isValid(doc) ? cpf_cnpj_1.format(doc) : cpf_cnpj_2.format(doc)) + " não foram encontrados registros de restrições."),
+	        });
+	      }
 	    } else {
 	      var separatorElement$1 = result.addSeparator(
 	        'Restrições Serasa',
@@ -1581,7 +1587,7 @@
 	  });
 
 	  controller.registerCall('icheques::consulta::serasa', function (result, doc, serasaButton) { return hasCredits(3700, function () { return controller.serverCommunication.call(
-	    'SELECT FROM \'PROTESTOS\'.\'SERASA\'',{
+	    'SELECT FROM \'PROTESTOS\'.\'SERASA\'', {
 	      dataType: 'json',
 	      data: {
 	        documento: doc.replace(/[^0-9]/g, ''),
@@ -1591,7 +1597,7 @@
 	      },
 	      error: function (err) {
 	        toastr.error('Houve um erro ao consultar inadimplência. Tente novamente mais tarde.');
-	      }
+	      },
 	    }
 	  ); }); });
 	  controller.registerTrigger(
@@ -1632,7 +1638,7 @@
 	        });
 	      }
 
-	      
+
 	      result.addItem().prepend(imoveisButton);
 	      cb();
 	    }
@@ -1681,7 +1687,6 @@
 	      var result = ref.result;
 	      var doc = ref.doc;
 
-	      if (cpf_cnpj_2.isValid(doc)) { return; }
 	      cb();
 	      var scoreButton = null;
 	      var consultaScoreBoaVistaLiberada = systemTags.indexOf('no-score-boa-vista') === -1;
@@ -1690,19 +1695,19 @@
 	        .addClass('button')
 	        .append(
 	          $$1('<small />')
-	            .text('CPF Somente - R$ 3,00')
+	            .text('CPF R$ 3,00 / CNPJ R$ 6,00')
 	            .css({
 	              display: 'block',
 	              'font-size': '9px',
 	            })
 	        );
 
-	      if (consultaScoreBoaVistaLiberada){
+	      if (consultaScoreBoaVistaLiberada) {
 	        scoreButton.click(
 	          controller.click('icheques::consulta::score', result, doc, scoreButton)
 	        );
 	      } else {
-	        scoreButton.on('click', function (ev) { 
+	        scoreButton.on('click', function (ev) {
 	          ev.preventDefault();
 	          controller.call('blockedOperation', 'score-boa-vista');
 	        });
@@ -1733,7 +1738,7 @@
 	            })
 	        );
 
-	      if(consultaPefinSerasaLiberada) {
+	      if (consultaPefinSerasaLiberada) {
 	        serasaButton.click(
 	          controller.click('icheques::consulta::serasa', result, doc, serasaButton)
 	        );
