@@ -370,6 +370,8 @@ harlan.addPlugin((controller) => {
       data = dataRes;
     }
 
+    const valorTotalPendencias = data.informacoes.hasOwnProperty('valorTotalPendencias') ? data.informacoes.valorTotalPendencias : null;
+
     try {
       data = data.informacoes[0].bello;
     } catch (e) {
@@ -422,7 +424,7 @@ harlan.addPlugin((controller) => {
       const separatorElement = result.addSeparator(
         'Restrições Serasa',
         'Apontamentos e Restrições Financeiras e Comerciais',
-        'Pendências e restrições financeiras no Serasa',
+        valorTotalPendencias !== null ? 'O documento possui ' + formatter.format(valorTotalPendencias) + 'em pendências Financeiras' :'Pendências e restrições financeiras no Serasa',
       ).addClass('error');
 
       data.forEach((ocorrencia) => {
