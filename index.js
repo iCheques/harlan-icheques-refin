@@ -1,9 +1,9 @@
 (function (harlan, $$1, numeral) {
 	'use strict';
 
-	harlan = harlan && harlan.hasOwnProperty('default') ? harlan['default'] : harlan;
-	$$1 = $$1 && $$1.hasOwnProperty('default') ? $$1['default'] : $$1;
-	numeral = numeral && numeral.hasOwnProperty('default') ? numeral['default'] : numeral;
+	harlan = harlan && Object.prototype.hasOwnProperty.call(harlan, 'default') ? harlan['default'] : harlan;
+	$$1 = $$1 && Object.prototype.hasOwnProperty.call($$1, 'default') ? $$1['default'] : $$1;
+	numeral = numeral && Object.prototype.hasOwnProperty.call(numeral, 'default') ? numeral['default'] : numeral;
 
 	var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
@@ -1519,11 +1519,18 @@
 	      data = dataRes;
 	    }
 
+	    var valorTotalPendencias = data.informacoes.hasOwnProperty('valorTotalPendencias') ? data.informacoes.valorTotalPendencias : null;
+
 	    try {
 	      data = data.informacoes[0].bello;
 	    } catch (e) {
 	      console.log(e);
 	    }
+
+	    var formatter = (new Intl.NumberFormat('pt-BR', {
+	      style: 'currency',
+	      currency: 'BRL',
+	    }));
 
 	    if (serasaButton != null) { serasaButton.remove(); }
 
@@ -1564,7 +1571,7 @@
 	      var separatorElement$1 = result.addSeparator(
 	        'Restrições Serasa',
 	        'Apontamentos e Restrições Financeiras e Comerciais',
-	        'Pendências e restrições financeiras no Serasa'
+	        valorTotalPendencias !== null ? 'O documento possui ' + formatter.format(valorTotalPendencias) + 'em pendências Financeiras' :'Pendências e restrições financeiras no Serasa'
 	      ).addClass('error');
 
 	      data.forEach(function (ocorrencia) {
