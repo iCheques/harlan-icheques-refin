@@ -536,7 +536,50 @@ harlan.addPlugin((controller) => {
           controller.call('blockedOperation', 'consulta-pefin-refin-boa-vista');
         });
       }
+
+      let serasaButton = null;
+      serasaButton = $('<button />')
+        .text('Consultar Pefin/Refin Serasa')
+        .addClass('button')
+        .append(
+          $('<small />')
+            .text('CPF/CNPJ - R$ 3,70')
+            .css({
+              display: 'block',
+              'font-size': '9px',
+            }),
+        );
+
+      serasaButton.on('click', ev => {
+        ev.preventDefault();
+        const modal = controller.call('modal');
+        modal.gamification('fail');
+        modal.title('Consulta Serasa Indisponível');
+        modal.paragraph('Devido às praticas anticompetitivas impostas pela Serasa, o fornecimento de Pefin/Refin Serasa está temporariamente indisponível.  Recomendamos utilizar o Pefin/Refin Boa Vista como substituto até a normalização:');
+        const form = modal.createForm();
+        const btnRefin = $('<button />')
+        .text('Consultar Pefin/Refin Boa Vista')
+        .addClass('button')
+        .append(
+          $('<small />')
+            .text('CPF R$1,20 / CNPJ R$2,70')
+            .css({
+              display: 'block',
+              'font-size': '9px',
+            }),
+        );
+        btnRefin.on('click', ev => {
+          ev.preventDefault();
+          modal.close();
+          refinButton.click();
+        });
+        form.element().append(btnRefin);
+        modal.createActions().cancel();
+      });
+
+      
       result.addItem().prepend(refinButton);
+      result.addItem().prepend(serasaButton);
     },
   );
 
@@ -576,7 +619,7 @@ harlan.addPlugin((controller) => {
     },
   );
 
-  controller.registerTrigger(
+  /*controller.registerTrigger(
     'ccbusca::parser',
     'serasa',
     ({
@@ -610,5 +653,5 @@ harlan.addPlugin((controller) => {
       }
       result.addItem().prepend(serasaButton);
     },
-  );
+  );*/
 });
