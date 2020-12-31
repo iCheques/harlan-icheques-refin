@@ -446,7 +446,7 @@ harlan.addPlugin((controller) => {
     }
   });
 
-  controller.registerCall('icheques::consulta::serasa', (result, doc, serasaButton) => hasCredits(3700, () => controller.serverCommunication.call(
+  controller.registerCall('icheques::consulta::serasa', (result, doc, serasaButton) => hasCredits(4000, () => controller.serverCommunication.call(
     'SELECT FROM \'PROTESTOS\'.\'SERASA\'', {
       dataType: 'json',
       data: {
@@ -536,50 +536,8 @@ harlan.addPlugin((controller) => {
           controller.call('blockedOperation', 'consulta-pefin-refin-boa-vista');
         });
       }
-
-      let serasaButton = null;
-      serasaButton = $('<button />')
-        .text('Consultar Pefin/Refin Serasa')
-        .addClass('button')
-        .append(
-          $('<small />')
-            .text('CPF/CNPJ - R$ 3,70')
-            .css({
-              display: 'block',
-              'font-size': '9px',
-            }),
-        );
-
-      serasaButton.on('click', ev => {
-        ev.preventDefault();
-        const modal = controller.call('modal');
-        modal.gamification('fail');
-        modal.title('Consulta Serasa Indisponível');
-        modal.paragraph('Devido às praticas anticompetitivas impostas pela Serasa, o fornecimento de Pefin/Refin Serasa está temporariamente indisponível.  Recomendamos utilizar o Pefin/Refin Boa Vista como substituto até a normalização:');
-        const form = modal.createForm();
-        const btnRefin = $('<button />')
-        .text('Consultar Pefin/Refin Boa Vista')
-        .addClass('button')
-        .append(
-          $('<small />')
-            .text('CPF R$1,20 / CNPJ R$2,70')
-            .css({
-              display: 'block',
-              'font-size': '9px',
-            }),
-        );
-        btnRefin.on('click', ev => {
-          ev.preventDefault();
-          modal.close();
-          refinButton.click();
-        });
-        form.element().append(btnRefin);
-        modal.createActions().cancel();
-      });
-
-      
+    
       result.addItem().prepend(refinButton);
-      result.addItem().prepend(serasaButton);
     },
   );
 
@@ -619,7 +577,7 @@ harlan.addPlugin((controller) => {
     },
   );
 
-  /*controller.registerTrigger(
+  controller.registerTrigger(
     'ccbusca::parser',
     'serasa',
     ({
@@ -634,24 +592,28 @@ harlan.addPlugin((controller) => {
         .addClass('button')
         .append(
           $('<small />')
-            .text('CPF/CNPJ - R$ 3,70')
+            .text('CPF/CNPJ - R$ 4')
             .css({
               display: 'block',
               'font-size': '9px',
             }),
         );
-
-      if (consultaPefinSerasaLiberada) {
+      
+      if (consultaPefinSerasaLiberada && (systemTags.join().match(/(flex|ouro|prata|diamante)/) != null)) {
         serasaButton.click(
           controller.click('icheques::consulta::serasa', result, doc, serasaButton),
         );
       } else {
         serasaButton.on('click', (ev) => {
           ev.preventDefault();
+          if (systemTags.join().match(/(flex|ouro|prata|diamante)/) === null) return controller.call('alert', {
+            title: 'Infelizmente voce não tem permissão para isso!',
+            subtitle: 'Para realizar essa consulta é necessário que você esteja no plano flex, prata, ouro ou diamante.',
+          });
           controller.call('blockedOperation', 'consulta-pefin-refin-serasa');
         });
       }
       result.addItem().prepend(serasaButton);
     },
-  );*/
+  );
 });
