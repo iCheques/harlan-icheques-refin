@@ -1,9 +1,9 @@
 (function (harlan, $$1, numeral) {
 	'use strict';
 
-	harlan = harlan && harlan.hasOwnProperty('default') ? harlan['default'] : harlan;
-	$$1 = $$1 && $$1.hasOwnProperty('default') ? $$1['default'] : $$1;
-	numeral = numeral && numeral.hasOwnProperty('default') ? numeral['default'] : numeral;
+	harlan = harlan && Object.prototype.hasOwnProperty.call(harlan, 'default') ? harlan['default'] : harlan;
+	$$1 = $$1 && Object.prototype.hasOwnProperty.call($$1, 'default') ? $$1['default'] : $$1;
+	numeral = numeral && Object.prototype.hasOwnProperty.call(numeral, 'default') ? numeral['default'] : numeral;
 
 	var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
@@ -1319,7 +1319,7 @@
 	      2000);
 	      firstCall = false;
 	    }
-	    addItem('Score', score.score);
+	    addItem('Score', parseInt(score.score));
 	    addItem('Probabilidade de Inadimplência', score.provavel);
 	    if (!cpf_cnpj_2.isValid(doc)) { addItem('Classificação', score.classificacao); }
 	    addItem('Análise', score.texto);
@@ -1328,8 +1328,39 @@
 	      addItem('Classificação Númerica', score.classificacao_numerica);
 	      addItem('Classificação Alfabética', score.classificacao_alfabetica);
 	    }
+	    var dataScore = [{
+	      name: 'Score Boa Vista',
+	      value: parseInt(score.score),
+	    }];
 
-	    controller.call('minimizar::categorias', result.element());
+	    if (cpf_cnpj_2.isValid()) {
+	      dataScore.push({
+	        name: 'Classificação Númerica',
+	        value: score.classificacao_numerica
+	      }, {
+	        name: 'Classificação Alfabética',
+	        value: score.classificacao_alfabetica
+	      });
+	    } else {
+	      dataScore.push({
+	        name: 'Classificação',
+	        value: score.classificacao
+	      });
+	    }
+	    var content = result.element().parent().find('.separator.resumo_negativacoes').parent().find('.name:contains(Processos Jurídicos)').parent().parent();
+	    
+	    var fields = dataScore.map(function (info) {
+	      var field = $$1('<div>').addClass('field');
+	      var name = $$1('<div>').addClass('name').text(info.name);
+	      var value = $$1('<div>').addClass('value').text(info.value);
+
+	      return field.append(value, name);
+	    });
+
+	    console.log(content, fields);
+
+	    content.append(fields);
+	    
 	  });
 
 	  controller.registerCall('icheques::consulta::score', function (result, doc, scoreButton) { return hasCredits(cpf_cnpj_2.isValid(doc) ? 6000 : 3700, function () { return controller.serverCommunication.call(
@@ -1351,7 +1382,7 @@
 	    )
 	  ); }); });
 
-	  controller.registerCall('icheques::consulta::refin::generate', function (data, result, doc, alertDisabled, firstCallDisabled, refinButton) {
+	  controller.registerCall('icheques::consulta::refin::generate', function (data, result, doc, alertDisabled, firstCallDisabled, refinButton, jdocument) {
 	    if ( alertDisabled === void 0 ) alertDisabled = false;
 	    if ( firstCallDisabled === void 0 ) firstCallDisabled = false;
 	    if ( refinButton === void 0 ) refinButton = null;
@@ -1372,10 +1403,29 @@
 
 	    if (newData.hasOwnProperty('spc')) { possuiRestricoes = newData.spc[0].length; }
 
+	    var resumoNegativacoes = result.element().parent().find('.resumo_negativacoes');
+
 	    var firstCall = !firstCallDisabled;
 	    // eslint-disable-next-line max-len
-	    var addItem = function (name, value, after) { return value && result.addItem(name, value, undefined, after); };
+	    var addItem = function (name, value, after) { return value && result.addItem(name, value, undefined, after).parent().css({paddingTop: 0, paddingBottom: 0}); };
 	    if (!possuiRestricoes) {
+
+	      if (resumoNegativacoes.length) {
+	        var contentResumoNegativacoes = resumoNegativacoes.next().find('content');
+	        if (contentResumoNegativacoes.length) {
+	          var field = $$1('<div>').addClass('.field');
+	          var name = $$1('<div>').addClass('.name');
+	          var value = $$1('<div>').addClass('.value');
+
+	          name.text('Não foram encontradas ocorrências');
+	          value.text('Pefin/Refin Boa Vista');
+
+	          field.append(value, name);
+
+	          contentResumoNegativacoes.push(field);
+	        }
+	      }
+
 	      var separatorElement = result.addSeparator(
 	        'Restrições Pefin/Refin Boa Vista',
 	        'Apontamentos e Restrições Financeiras e Comerciais',
@@ -1391,8 +1441,6 @@
 	      }
 
 	      addItem('Informação', ("Para o documento " + (cpf_cnpj_1.isValid(doc) ? cpf_cnpj_1.format(doc) : cpf_cnpj_2.format(doc)) + " não foram encontrados registros de restrições."));
-
-	      controller.call('minimizar::categorias', result.element());
 
 	      if (!alertDisabled) {
 	        controller.call('alert', {
@@ -1411,6 +1459,7 @@
 	      currency: 'BRL',
 	    }));
 
+	    var firstPefinRefin = true;
 	    newData.spc[0].forEach(function (spc) {
 	      var separatorElement = result
 	        .addSeparator(
@@ -1419,6 +1468,8 @@
 	          'Pendências e restrições financeiras nos bureaus de crédito Refin e Pefin'
 	        )
 	        .addClass('error');
+	      if (!firstPefinRefin) { separatorElement.hide().find('.container').remove(); }
+	      if (firstPefinRefin) { firstPefinRefin = false; }
 	        // controller.call('minimizar::categorias', result.element());
 	      if (firstCall) {
 	        $$1('html, body').animate({
@@ -1443,6 +1494,11 @@
 	      addItem('UF Associado', spc.UfAssociado);
 	    });
 
+	    if (resumoNegativacoes.length) {
+	      result.element().parent().find('.result:contains(Resumo de Negativações)').remove();
+	      controller.call('grafico::analitico', result.element().parent(), doc, jdocument, true);
+	    }
+
 	    if (newData.consultaRealizada.length) {
 	      result.addSeparator(
 	        'Quem consultou este CPF/CNPJ?',
@@ -1460,14 +1516,12 @@
 	        // addItem('Cidade Associado', consultaRealizada.CidadeAssociado,);
 	        // addItem('UF Associado', consultaRealizada.UfAssociado);
 	      });
-
-	      controller.call('minimizar::categorias', result.element());
 	    }
 	  });
 
 	  controller.registerCall(
 	    'icheques::consulta::refin',
-	    function (result, doc, refinButton) {
+	    function (result, doc, refinButton, jdocument) {
 	      var config = {
 	        cpf: {
 	          endpointCall: "SELECT FROM 'PROTESTOS'.'REFIN'",
@@ -1497,7 +1551,7 @@
 	              toastr.error('Houve um erro ao consultar a inadimplência. O valor da consulta já foi estornado, por favor, tente mais tarde.');
 	            },
 	            success: function (data) {
-	              controller.call('icheques::consulta::refin::generate', data, result, doc, false, false, refinButton);
+	              controller.call('icheques::consulta::refin::generate', data, result, doc, false, false, refinButton, jdocument);
 	            },
 	          }
 	        )
@@ -1505,7 +1559,7 @@
 	    }
 	  );
 
-	  controller.registerCall('icheques::consulta::serasa::generate', function (dataRes, result, doc, alertDisabled, firstCallDisabled, serasaButton) {
+	  controller.registerCall('icheques::consulta::serasa::generate', function (dataRes, result, doc, alertDisabled, firstCallDisabled, serasaButton, jdocument) {
 	    if ( alertDisabled === void 0 ) alertDisabled = false;
 	    if ( firstCallDisabled === void 0 ) firstCallDisabled = false;
 	    if ( serasaButton === void 0 ) serasaButton = null;
@@ -1538,8 +1592,23 @@
 	    var addItem = function (name, value) { return value && fieldsCreator.addItem(name, value); };
 
 	    var firstCall = !firstCallDisabled;
-
+	    var resumoNegativacoes = result.element().parent().find('.resumo_negativacoes');
 	    if (!data.length) {
+	      if (resumoNegativacoes.length) {
+	        var contentResumoNegativacoes = resumoNegativacoes.next().find('content');
+	        if (contentResumoNegativacoes.length) {
+	          var field = $$1('<div>').addClass('.field');
+	          var name = $$1('<div>').addClass('.name');
+	          var value = $$1('<div>').addClass('.value');
+
+	          name.text('Não foram encontradas ocorrências');
+	          value.text('Pefin/Refin Boa Vista');
+
+	          field.append(value, name);
+
+	          contentResumoNegativacoes.push(field);
+	        }
+	      }
 	      var separatorElement = result.addSeparator(
 	        'Restrições Serasa',
 	        'Apontamentos e Restrições Financeiras e Comerciais',
@@ -1556,8 +1625,6 @@
 
 	      addItem('Informação', ("Para o documento " + (cpf_cnpj_1.isValid(doc) ? cpf_cnpj_1.format(doc) : cpf_cnpj_2.format(doc)) + " não foram encontrados registros de restrições."));
 	      result.element().append(fieldsCreator.element());
-
-	      controller.call('minimizar::categorias', result.element());
 
 	      if (!alertDisabled) {
 	        controller.call('alert', {
@@ -1589,7 +1656,10 @@
 	        fieldsCreator.resetFields();
 	      });
 
-	      controller.call('minimizar::categorias', result.element());
+	      if (resumoNegativacoes.length) {
+	        result.element().parent().find('.result:contains(Resumo de Negativações)').remove();
+	        controller.call('grafico::analitico', result.element().parent(), doc, jdocument, true);
+	      }
 	    }
 	  });
 
@@ -1600,7 +1670,7 @@
 	        documento: doc.replace(/[^0-9]/g, ''),
 	      },
 	      success: function (dataRes) {
-	        controller.call('icheques::consulta::serasa::generate', dataRes, result, doc, false, false, serasaButton);
+	        controller.call('icheques::consulta::serasa::generate', dataRes, result, doc, false, false, serasaButton, jdocument);
 	      },
 	      error: function (err) {
 	        toastr.error('Houve um erro ao consultar inadimplência. Tente novamente mais tarde.');
@@ -1657,6 +1727,7 @@
 	    function (ref, cb) {
 	      var result = ref.result;
 	      var doc = ref.doc;
+	      var jdocument = ref.jdocument;
 
 	      cb();
 	      var refinButton = null;
@@ -1675,7 +1746,7 @@
 
 	      if (consultaRefinBoaVistaLiberada) {
 	        refinButton.click(
-	          controller.click('icheques::consulta::refin', result, doc, refinButton)
+	          controller.click('icheques::consulta::refin', result, doc, refinButton, jdocument)
 	        );
 	      } else {
 	        refinButton.on('click', function (ev) {
@@ -1730,6 +1801,7 @@
 	    function (ref, cb) {
 	      var result = ref.result;
 	      var doc = ref.doc;
+	      var jdocument = ref.jdocument;
 
 	      cb();
 	      var serasaButton = null;
@@ -1748,7 +1820,7 @@
 	      
 	      if (consultaPefinSerasaLiberada && (systemTags.join().match(/(flex|ouro|prata|diamante)/) != null)) {
 	        serasaButton.click(
-	          controller.click('icheques::consulta::serasa', result, doc, serasaButton)
+	          controller.click('icheques::consulta::serasa', result, doc, serasaButton, jdocument)
 	        );
 	      } else {
 	        serasaButton.on('click', function (ev) {

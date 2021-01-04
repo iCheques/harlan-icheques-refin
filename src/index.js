@@ -178,7 +178,7 @@ harlan.addPlugin((controller) => {
       2000);
       firstCall = false;
     }
-    addItem('Score', score.score);
+    addItem('Score', parseInt(score.score));
     addItem('Probabilidade de Inadimplência', score.provavel);
     if (!CNPJ.isValid(doc)) addItem('Classificação', score.classificacao);
     addItem('Análise', score.texto);
@@ -187,8 +187,39 @@ harlan.addPlugin((controller) => {
       addItem('Classificação Númerica', score.classificacao_numerica);
       addItem('Classificação Alfabética', score.classificacao_alfabetica);
     }
+    const dataScore = [{
+      name: 'Score Boa Vista',
+      value: parseInt(score.score),
+    }];
 
-    controller.call('minimizar::categorias', result.element());
+    if (CNPJ.isValid()) {
+      dataScore.push({
+        name: 'Classificação Númerica',
+        value: score.classificacao_numerica
+      }, {
+        name: 'Classificação Alfabética',
+        value: score.classificacao_alfabetica
+      });
+    } else {
+      dataScore.push({
+        name: 'Classificação',
+        value: score.classificacao
+      });
+    }
+    const content = result.element().parent().find('.separator.resumo_negativacoes').parent().find('.name:contains(Processos Jurídicos)').parent().parent();
+    
+    const fields = dataScore.map(info => {
+      const field = $('<div>').addClass('field');
+      const name = $('<div>').addClass('name').text(info.name);
+      const value = $('<div>').addClass('value').text(info.value);
+
+      return field.append(value, name);
+    });
+
+    console.log(content, fields);
+
+    content.append(fields);
+    
   });
 
   controller.registerCall('icheques::consulta::score', (result, doc, scoreButton) => hasCredits(CNPJ.isValid(doc) ? 6000 : 3700, () => controller.serverCommunication.call(
@@ -210,7 +241,7 @@ harlan.addPlugin((controller) => {
     ),
   )));
 
-  controller.registerCall('icheques::consulta::refin::generate', (data, result, doc, alertDisabled = false, firstCallDisabled = false, refinButton = null) => {
+  controller.registerCall('icheques::consulta::refin::generate', (data, result, doc, alertDisabled = false, firstCallDisabled = false, refinButton = null, jdocument) => {
     if (refinButton != null) refinButton.remove();
 
     let newData;
@@ -227,10 +258,29 @@ harlan.addPlugin((controller) => {
 
     if (newData.hasOwnProperty('spc')) possuiRestricoes = newData.spc[0].length;
 
+    const resumoNegativacoes = result.element().parent().find('.resumo_negativacoes');
+
     let firstCall = !firstCallDisabled;
     // eslint-disable-next-line max-len
-    const addItem = (name, value, after) => value && result.addItem(name, value, undefined, after);
+    const addItem = (name, value, after) => value && result.addItem(name, value, undefined, after).parent().css({paddingTop: 0, paddingBottom: 0});
     if (!possuiRestricoes) {
+
+      if (resumoNegativacoes.length) {
+        const contentResumoNegativacoes = resumoNegativacoes.next().find('content');
+        if (contentResumoNegativacoes.length) {
+          const field = $('<div>').addClass('.field');
+          const name = $('<div>').addClass('.name');
+          const value = $('<div>').addClass('.value');
+
+          name.text('Não foram encontradas ocorrências')
+          value.text('Pefin/Refin Boa Vista')
+
+          field.append(value, name);
+
+          contentResumoNegativacoes.push(field);
+        }
+      }
+
       const separatorElement = result.addSeparator(
         'Restrições Pefin/Refin Boa Vista',
         'Apontamentos e Restrições Financeiras e Comerciais',
@@ -246,8 +296,6 @@ harlan.addPlugin((controller) => {
       }
 
       addItem('Informação', `Para o documento ${CPF.isValid(doc) ? CPF.format(doc) : CNPJ.format(doc)} não foram encontrados registros de restrições.`);
-
-      controller.call('minimizar::categorias', result.element());
 
       if (!alertDisabled) {
         controller.call('alert', {
@@ -268,14 +316,17 @@ harlan.addPlugin((controller) => {
       currency: 'BRL',
     }));
 
+    let firstPefinRefin = true;
     newData.spc[0].forEach((spc) => {
-      const separatorElement = result
+      let separatorElement = result
         .addSeparator(
           'Restrição no Refin/Pefin',
           'Apontamentos e Restrições Financeiras e Comerciais',
           'Pendências e restrições financeiras nos bureaus de crédito Refin e Pefin',
         )
         .addClass('error');
+      if (!firstPefinRefin) separatorElement.hide().find('.container').remove();
+      if (firstPefinRefin) firstPefinRefin = false;
         // controller.call('minimizar::categorias', result.element());
       if (firstCall) {
         $('html, body').animate({
@@ -300,6 +351,11 @@ harlan.addPlugin((controller) => {
       addItem('UF Associado', spc.UfAssociado);
     });
 
+    if (resumoNegativacoes.length) {
+      result.element().parent().find('.result:contains(Resumo de Negativações)').remove();
+      controller.call('grafico::analitico', result.element().parent(), doc, jdocument, true);
+    }
+
     if (newData.consultaRealizada.length) {
       result.addSeparator(
         'Quem consultou este CPF/CNPJ?',
@@ -317,14 +373,12 @@ harlan.addPlugin((controller) => {
         // addItem('Cidade Associado', consultaRealizada.CidadeAssociado,);
         // addItem('UF Associado', consultaRealizada.UfAssociado);
       });
-
-      controller.call('minimizar::categorias', result.element());
     }
   });
 
   controller.registerCall(
     'icheques::consulta::refin',
-    (result, doc, refinButton) => {
+    (result, doc, refinButton, jdocument) => {
       const config = {
         cpf: {
           endpointCall: "SELECT FROM 'PROTESTOS'.'REFIN'",
@@ -352,7 +406,7 @@ harlan.addPlugin((controller) => {
               toastr.error('Houve um erro ao consultar a inadimplência. O valor da consulta já foi estornado, por favor, tente mais tarde.')
             },
             success: (data) => {
-              controller.call('icheques::consulta::refin::generate', data, result, doc, false, false, refinButton);
+              controller.call('icheques::consulta::refin::generate', data, result, doc, false, false, refinButton, jdocument);
             },
           },
         ),
@@ -360,7 +414,7 @@ harlan.addPlugin((controller) => {
     },
   );
 
-  controller.registerCall('icheques::consulta::serasa::generate', (dataRes, result, doc, alertDisabled = false, firstCallDisabled = false, serasaButton = null) => {
+  controller.registerCall('icheques::consulta::serasa::generate', (dataRes, result, doc, alertDisabled = false, firstCallDisabled = false, serasaButton = null, jdocument) => {
     if ($.isEmptyObject(dataRes)) return;
     let data;
 
@@ -389,8 +443,23 @@ harlan.addPlugin((controller) => {
     const addItem = (name, value) => value && fieldsCreator.addItem(name, value);
 
     let firstCall = !firstCallDisabled;
-
+    const resumoNegativacoes = result.element().parent().find('.resumo_negativacoes');
     if (!data.length) {
+      if (resumoNegativacoes.length) {
+        const contentResumoNegativacoes = resumoNegativacoes.next().find('content');
+        if (contentResumoNegativacoes.length) {
+          const field = $('<div>').addClass('.field');
+          const name = $('<div>').addClass('.name');
+          const value = $('<div>').addClass('.value');
+
+          name.text('Não foram encontradas ocorrências')
+          value.text('Pefin/Refin Boa Vista')
+
+          field.append(value, name);
+
+          contentResumoNegativacoes.push(field);
+        }
+      }
       const separatorElement = result.addSeparator(
         'Restrições Serasa',
         'Apontamentos e Restrições Financeiras e Comerciais',
@@ -407,8 +476,6 @@ harlan.addPlugin((controller) => {
 
       addItem('Informação', `Para o documento ${CPF.isValid(doc) ? CPF.format(doc) : CNPJ.format(doc)} não foram encontrados registros de restrições.`);
       result.element().append(fieldsCreator.element());
-
-      controller.call('minimizar::categorias', result.element());
 
       if (!alertDisabled) {
         controller.call('alert', {
@@ -442,7 +509,10 @@ harlan.addPlugin((controller) => {
         fieldsCreator.resetFields();
       });
 
-      controller.call('minimizar::categorias', result.element());
+      if (resumoNegativacoes.length) {
+        result.element().parent().find('.result:contains(Resumo de Negativações)').remove();
+        controller.call('grafico::analitico', result.element().parent(), doc, jdocument, true);
+      }
     }
   });
 
@@ -453,7 +523,7 @@ harlan.addPlugin((controller) => {
         documento: doc.replace(/[^0-9]/g, ''),
       },
       success: (dataRes) => {
-        controller.call('icheques::consulta::serasa::generate', dataRes, result, doc, false, false, serasaButton);
+        controller.call('icheques::consulta::serasa::generate', dataRes, result, doc, false, false, serasaButton, jdocument);
       },
       error: (err) => {
         toastr.error('Houve um erro ao consultar inadimplência. Tente novamente mais tarde.');
@@ -510,6 +580,7 @@ harlan.addPlugin((controller) => {
     ({
       result,
       doc,
+      jdocument
     }, cb) => {
       cb();
       let refinButton = null;
@@ -528,7 +599,7 @@ harlan.addPlugin((controller) => {
 
       if (consultaRefinBoaVistaLiberada) {
         refinButton.click(
-          controller.click('icheques::consulta::refin', result, doc, refinButton),
+          controller.click('icheques::consulta::refin', result, doc, refinButton, jdocument),
         );
       } else {
         refinButton.on('click', (ev) => {
@@ -583,6 +654,7 @@ harlan.addPlugin((controller) => {
     ({
       result,
       doc,
+      jdocument
     }, cb) => {
       cb();
       let serasaButton = null;
@@ -601,7 +673,7 @@ harlan.addPlugin((controller) => {
       
       if (consultaPefinSerasaLiberada && (systemTags.join().match(/(flex|ouro|prata|diamante)/) != null)) {
         serasaButton.click(
-          controller.click('icheques::consulta::serasa', result, doc, serasaButton),
+          controller.click('icheques::consulta::serasa', result, doc, serasaButton, jdocument),
         );
       } else {
         serasaButton.on('click', (ev) => {
