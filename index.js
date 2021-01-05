@@ -1615,6 +1615,8 @@
 	        'Pendências e restrições financeiras no Serasa'
 	      ).addClass('error');
 
+	      controller.call('resize', [separatorElement]);
+
 	      if (firstCall) {
 	        $$1('html, body').animate({
 	          scrollTop: separatorElement.offset().top,
@@ -1663,7 +1665,7 @@
 	    }
 	  });
 
-	  controller.registerCall('icheques::consulta::serasa', function (result, doc, serasaButton) { return hasCredits(4000, function () { return controller.serverCommunication.call(
+	  controller.registerCall('icheques::consulta::serasa', function (result, doc, serasaButton, jdocument) { return hasCredits(4000, function () { return controller.serverCommunication.call(
 	    'SELECT FROM \'PROTESTOS\'.\'SERASA\'', {
 	      dataType: 'json',
 	      data: {

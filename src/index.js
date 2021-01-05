@@ -466,6 +466,8 @@ harlan.addPlugin((controller) => {
         'Pendências e restrições financeiras no Serasa',
       ).addClass('error');
 
+      controller.call('resize', [separatorElement]);
+
       if (firstCall) {
         $('html, body').animate({
           scrollTop: separatorElement.offset().top,
@@ -516,7 +518,7 @@ harlan.addPlugin((controller) => {
     }
   });
 
-  controller.registerCall('icheques::consulta::serasa', (result, doc, serasaButton) => hasCredits(4000, () => controller.serverCommunication.call(
+  controller.registerCall('icheques::consulta::serasa', (result, doc, serasaButton, jdocument) => hasCredits(4000, () => controller.serverCommunication.call(
     'SELECT FROM \'PROTESTOS\'.\'SERASA\'', {
       dataType: 'json',
       data: {
