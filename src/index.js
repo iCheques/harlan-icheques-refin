@@ -206,7 +206,9 @@ harlan.addPlugin((controller) => {
         value: score.classificacao
       });
     }
-    const content = result.element().parent().find('.separator.resumo_negativacoes').parent().find('.name:contains(Processos Jurídicos)').parent().parent();
+    const content = result.element().parent().find('.separator.resumo_negativacoes').find('content');
+
+    return console.log(content, dataScore);
     
     const fields = dataScore.map(info => {
       const field = $('<div>').addClass('field');
@@ -242,6 +244,7 @@ harlan.addPlugin((controller) => {
   )));
 
   controller.registerCall('icheques::consulta::refin::generate', (data, result, doc, alertDisabled = false, firstCallDisabled = false, refinButton = null, jdocument) => {
+
     if (refinButton != null) refinButton.remove();
 
     let newData;
@@ -387,7 +390,7 @@ harlan.addPlugin((controller) => {
               documento: doc.replace(/[^0-9]/g, ''),
             },
             error: () => {
-              toastr.error('Houve um erro ao consultar a inadimplência. O valor da consulta já foi estornado, por favor, tente mais tarde.')
+              toastr.error('Houve um erro ao verificar seu saldo. Por favor, tente mais tarde.')
             },
             success: (data) => {
               controller.call('icheques::consulta::refin::generate', data, result, doc, false, false, refinButton, jdocument);

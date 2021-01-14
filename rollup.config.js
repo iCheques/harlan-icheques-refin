@@ -1,6 +1,7 @@
 import buble from 'rollup-plugin-buble';
 import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
+import { uglify } from 'rollup-plugin-uglify';
 
 export default {
   input: 'src/index.js',
@@ -19,5 +20,6 @@ export default {
     resolve(),
     commonjs(),
     buble(),
+    uglify(),
   ],
 };
