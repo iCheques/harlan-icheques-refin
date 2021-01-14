@@ -265,22 +265,6 @@ harlan.addPlugin((controller) => {
     const addItem = (name, value, after) => value && result.addItem(name, value, undefined, after).parent().css({paddingTop: 0, paddingBottom: 0});
     if (!possuiRestricoes) {
 
-      if (resumoNegativacoes.length) {
-        const contentResumoNegativacoes = resumoNegativacoes.next().find('content');
-        if (contentResumoNegativacoes.length) {
-          const field = $('<div>').addClass('.field');
-          const name = $('<div>').addClass('.name');
-          const value = $('<div>').addClass('.value');
-
-          name.text('Não foram encontradas ocorrências')
-          value.text('Pefin/Refin Boa Vista')
-
-          field.append(value, name);
-
-          contentResumoNegativacoes.push(field);
-        }
-      }
-
       const separatorElement = result.addSeparator(
         'Restrições Pefin/Refin Boa Vista',
         'Apontamentos e Restrições Financeiras e Comerciais',
@@ -445,21 +429,6 @@ harlan.addPlugin((controller) => {
     let firstCall = !firstCallDisabled;
     const resumoNegativacoes = result.element().parent().find('.resumo_negativacoes');
     if (!data.length) {
-      if (resumoNegativacoes.length) {
-        const contentResumoNegativacoes = resumoNegativacoes.next().find('content');
-        if (contentResumoNegativacoes.length) {
-          const field = $('<div>').addClass('.field');
-          const name = $('<div>').addClass('.name');
-          const value = $('<div>').addClass('.value');
-
-          name.text('Não foram encontradas ocorrências')
-          value.text('Pefin/Refin Boa Vista')
-
-          field.append(value, name);
-
-          contentResumoNegativacoes.push(field);
-        }
-      }
       const separatorElement = result.addSeparator(
         'Restrições Serasa',
         'Apontamentos e Restrições Financeiras e Comerciais',

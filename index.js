@@ -1410,22 +1410,6 @@
 	    var addItem = function (name, value, after) { return value && result.addItem(name, value, undefined, after).parent().css({paddingTop: 0, paddingBottom: 0}); };
 	    if (!possuiRestricoes) {
 
-	      if (resumoNegativacoes.length) {
-	        var contentResumoNegativacoes = resumoNegativacoes.next().find('content');
-	        if (contentResumoNegativacoes.length) {
-	          var field = $$1('<div>').addClass('.field');
-	          var name = $$1('<div>').addClass('.name');
-	          var value = $$1('<div>').addClass('.value');
-
-	          name.text('Não foram encontradas ocorrências');
-	          value.text('Pefin/Refin Boa Vista');
-
-	          field.append(value, name);
-
-	          contentResumoNegativacoes.push(field);
-	        }
-	      }
-
 	      var separatorElement = result.addSeparator(
 	        'Restrições Pefin/Refin Boa Vista',
 	        'Apontamentos e Restrições Financeiras e Comerciais',
@@ -1594,21 +1578,6 @@
 	    var firstCall = !firstCallDisabled;
 	    var resumoNegativacoes = result.element().parent().find('.resumo_negativacoes');
 	    if (!data.length) {
-	      if (resumoNegativacoes.length) {
-	        var contentResumoNegativacoes = resumoNegativacoes.next().find('content');
-	        if (contentResumoNegativacoes.length) {
-	          var field = $$1('<div>').addClass('.field');
-	          var name = $$1('<div>').addClass('.name');
-	          var value = $$1('<div>').addClass('.value');
-
-	          name.text('Não foram encontradas ocorrências');
-	          value.text('Pefin/Refin Boa Vista');
-
-	          field.append(value, name);
-
-	          contentResumoNegativacoes.push(field);
-	        }
-	      }
 	      var separatorElement = result.addSeparator(
 	        'Restrições Serasa',
 	        'Apontamentos e Restrições Financeiras e Comerciais',
