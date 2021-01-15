@@ -216,7 +216,7 @@ harlan.addPlugin((controller) => {
     });
 
     const contentResumo = result.element().parent().find('.separator.resumo_negativacoes').next();
-    console.log(contentResumo, fields);
+
     const addContent = () => {
       const contentDiv = $('<div>').addClass('content');
       $('<div>').addClass('separator').css('display', 'none').insertAfter(contentResumo);
