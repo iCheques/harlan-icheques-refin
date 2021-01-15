@@ -1,6 +1,6 @@
 {
   "name": "harlan-icheques-refin",
-  "version": "1.0.70",
+  "version": "1.0.71",
   "description": "Extensão que habilita o consumo de REFIN na iCheques.",
   "main": "index.js",
   "scripts": {
