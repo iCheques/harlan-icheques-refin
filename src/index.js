@@ -206,9 +206,6 @@ harlan.addPlugin((controller) => {
         value: score.classificacao
       });
     }
-    const content = result.element().parent().find('.separator.resumo_negativacoes').find('content');
-
-    return console.log(content, dataScore);
     
     const fields = dataScore.map(info => {
       const field = $('<div>').addClass('field');
@@ -218,9 +215,27 @@ harlan.addPlugin((controller) => {
       return field.append(value, name);
     });
 
-    console.log(content, fields);
+    const contentResumo = result.element().parent().find('.separator.resumo_negativacoes').next();
+    console.log(contentResumo, fields);
+    const addContent = () => {
+      const contentDiv = $('<div>').addClass('content');
+      $('<div>').addClass('separator').css('display', 'none').insertAfter(contentResumo);
+      $('<div>').addClass('container').append(contentDiv).insertAfter(contentResumo);
+      
+      return contentDiv;
+    }
 
-    content.append(fields);
+    const contentResumo2 = contentResumo.next().next().length ? contentResumo.next().next().find('.content') : addContent();
+    const contentResumo3 = contentResumo2.next().next().length ? contentResumo2.next().next().find('.content') : addContent();
+    
+    if (CNPJ.isValid()) {
+      contentResumo.find('.content').append(fields[0]);
+      contentResumo2.append(fields[1])
+      contentResumo3.append(fields[2])
+    } else {
+      contentResumo.find('.content').append(fields[0]);
+      contentResumo2.append(fields[1])
+    }
     
   });
 
