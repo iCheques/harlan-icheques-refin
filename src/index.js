@@ -660,20 +660,41 @@ harlan.addPlugin((controller) => {
             }),
         );
       
-      if (consultaPefinSerasaLiberada && (systemTags.join().match(/(flex|ouro|prata|diamante)/) != null)) {
-        serasaButton.click(
-          controller.click('icheques::consulta::serasa', result, doc, serasaButton, jdocument),
-        );
-      } else {
-        serasaButton.on('click', (ev) => {
-          ev.preventDefault();
-          if (systemTags.join().match(/(flex|ouro|prata|diamante)/) === null) return controller.call('alert', {
-            title: 'Infelizmente voce não tem permissão para isso!',
-            subtitle: 'Para realizar essa consulta é necessário que você esteja no plano flex, prata, ouro ou diamante.',
+      controller.serverCommunication.call("SELECT FROM 'SubAccount'.'IsSubAccountAndHavePermissionPefinRefin'", {dataType: 'json'}).then(isSubAccountAndHavePermission => {
+        if (isSubAccountAndHavePermission && consultaPefinSerasaLiberada) {
+          serasaButton.click(
+            controller.click('icheques::consulta::serasa', result, doc, serasaButton, jdocument),
+          );
+        } else if (consultaPefinSerasaLiberada && (systemTags.join().match(/(flex|ouro|prata|diamante)/) != null)) {
+          serasaButton.click(
+            controller.click('icheques::consulta::serasa', result, doc, serasaButton, jdocument),
+          );
+        } else {
+          serasaButton.on('click', (ev) => {
+            ev.preventDefault();
+            if (systemTags.join().match(/(flex|ouro|prata|diamante)/) === null) return controller.call('alert', {
+              title: 'Infelizmente voce não tem permissão para isso!',
+              subtitle: 'Para realizar essa consulta é necessário que você esteja no plano flex, prata, ouro ou diamante.',
+            });
+            controller.call('blockedOperation', 'consulta-pefin-refin-serasa');
           });
-          controller.call('blockedOperation', 'consulta-pefin-refin-serasa');
-        });
-      }
+        }
+      }, err => {
+        if (consultaPefinSerasaLiberada && (systemTags.join().match(/(flex|ouro|prata|diamante)/) != null)) {
+          serasaButton.click(
+            controller.click('icheques::consulta::serasa', result, doc, serasaButton, jdocument),
+          );
+        } else {
+          serasaButton.on('click', (ev) => {
+            ev.preventDefault();
+            if (systemTags.join().match(/(flex|ouro|prata|diamante)/) === null) return controller.call('alert', {
+              title: 'Infelizmente voce não tem permissão para isso!',
+              subtitle: 'Para realizar essa consulta é necessário que você esteja no plano flex, prata, ouro ou diamante.',
+            });
+            controller.call('blockedOperation', 'consulta-pefin-refin-serasa');
+          });
+        }
+      });
       result.addItem().prepend(serasaButton);
     },
   );

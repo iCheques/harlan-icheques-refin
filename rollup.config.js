@@ -19,7 +19,7 @@ export default {
   plugins: [
     resolve(),
     commonjs(),
-    buble(),
+    buble({transforms: { asyncAwait: false }}),
     uglify(),
   ],
 };
