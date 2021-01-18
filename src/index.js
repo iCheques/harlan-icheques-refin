@@ -280,7 +280,7 @@ harlan.addPlugin((controller) => {
 
     let firstCall = !firstCallDisabled;
     // eslint-disable-next-line max-len
-    const addItem = (name, value, after) => value && result.addItem(name, value, undefined, after).parent().css({paddingTop: 0, paddingBottom: 0});
+    const addItem = (name, value, after) => value && result.addItem(name, value, undefined, after).parent().addClass('container-boa-vista').css({paddingTop: 0, paddingBottom: 0});
     if (!possuiRestricoes) {
 
       const separatorElement = result.addSeparator(
@@ -322,7 +322,7 @@ harlan.addPlugin((controller) => {
     newData.spc[0].forEach((spc) => {
       let separatorElement = result
         .addSeparator(
-          'Restrição no Refin/Pefin',
+          'Restrições Pefin/Refin Boa Vista',
           'Apontamentos e Restrições Financeiras e Comerciais',
           'Pendências e restrições financeiras nos bureaus de crédito Refin e Pefin',
         )
