@@ -405,7 +405,7 @@ harlan.addPlugin((controller) => {
               documento: doc.replace(/[^0-9]/g, ''),
             },
             error: () => {
-              toastr.error('Houve um erro ao verificar seu saldo. Por favor, tente mais tarde.')
+              toastr.error('Houve um erro ao consultar PEFIN/REFIN Boa Vista, o valor da consulta foi estornado. Por favor, tente mais tarde.')
             },
             success: (data) => {
               controller.call('icheques::consulta::refin::generate', data, result, doc, false, false, refinButton, jdocument);
