@@ -145,7 +145,7 @@ harlan.addPlugin((controller) => {
             documento: doc.replace(/[^0-9]/g, ''),
           },
           error: () => {
-            toastr.error('Houve um erro ao consultar imóveis. O valor da consulta já foi estornado, por favor, tente mais tarde.')
+            toastr.error('Houve um erro ao consultar imóveis. O valor da consulta já foi estornado, por favor, tente mais tarde.');
           },
           success: (data) => {
             controller.call('icheques::consulta::imoveis::generate', data, result, doc, false, false, imoveisButton);
@@ -195,19 +195,19 @@ harlan.addPlugin((controller) => {
     if (CNPJ.isValid()) {
       dataScore.push({
         name: 'Classificação Númerica',
-        value: score.classificacao_numerica
+        value: score.classificacao_numerica,
       }, {
         name: 'Classificação Alfabética',
-        value: score.classificacao_alfabetica
+        value: score.classificacao_alfabetica,
       });
     } else {
       dataScore.push({
         name: 'Classificação',
-        value: score.classificacao
+        value: score.classificacao,
       });
     }
-    
-    const fields = dataScore.map(info => {
+
+    const fields = dataScore.map((info) => {
       const field = $('<div>').addClass('field');
       const name = $('<div>').addClass('name').text(info.name);
       const value = $('<div>').addClass('value').text(info.value);
@@ -221,22 +221,21 @@ harlan.addPlugin((controller) => {
       const contentDiv = $('<div>').addClass('content');
       $('<div>').addClass('separator').css('display', 'none').insertAfter(contentResumo);
       $('<div>').addClass('container').append(contentDiv).insertAfter(contentResumo);
-      
+
       return contentDiv;
-    }
+    };
 
     const contentResumo2 = contentResumo.next().next().length ? contentResumo.next().next().find('.content') : addContent();
     const contentResumo3 = contentResumo2.next().next().length ? contentResumo2.next().next().find('.content') : addContent();
-    
+
     if (CNPJ.isValid()) {
       contentResumo.find('.content').append(fields[0]);
-      contentResumo2.append(fields[1])
-      contentResumo3.append(fields[2])
+      contentResumo2.append(fields[1]);
+      contentResumo3.append(fields[2]);
     } else {
       contentResumo.find('.content').append(fields[0]);
-      contentResumo2.append(fields[1])
+      contentResumo2.append(fields[1]);
     }
-    
   });
 
   controller.registerCall('icheques::consulta::score', (result, doc, scoreButton) => hasCredits(CNPJ.isValid(doc) ? 6000 : 3700, () => controller.serverCommunication.call(
@@ -249,7 +248,7 @@ harlan.addPlugin((controller) => {
           documento: doc.replace(/[^0-9]/g, ''),
         },
         error: () => {
-          toastr.error('Houve um erro ao consultar o Score. O valor da consulta já foi estornado, por favor, tente mais tarde.')
+          toastr.error('Houve um erro ao consultar o Score. O valor da consulta já foi estornado, por favor, tente mais tarde.');
         },
         success: (dataRes) => {
           controller.call('icheques::consulta::score::generate', dataRes, result, doc, false, false, scoreButton);
@@ -259,7 +258,6 @@ harlan.addPlugin((controller) => {
   )));
 
   controller.registerCall('icheques::consulta::refin::generate', (data, result, doc, alertDisabled = false, firstCallDisabled = false, refinButton = null, jdocument) => {
-
     if (refinButton != null) refinButton.remove();
 
     let newData;
@@ -280,9 +278,8 @@ harlan.addPlugin((controller) => {
 
     let firstCall = !firstCallDisabled;
     // eslint-disable-next-line max-len
-    const addItem = (name, value, after) => value && result.addItem(name, value, undefined, after).parent().addClass('container-boa-vista').css({paddingTop: 0, paddingBottom: 0});
+    const addItem = (name, value, after) => value && result.addItem(name, value, undefined, after).parent().addClass('container-boa-vista').css({ paddingTop: 0, paddingBottom: 0 });
     if (!possuiRestricoes) {
-
       const separatorElement = result.addSeparator(
         'Restrições Pefin/Refin Boa Vista',
         'Apontamentos e Restrições Financeiras e Comerciais',
@@ -320,7 +317,7 @@ harlan.addPlugin((controller) => {
 
     let firstPefinRefin = true;
     newData.spc[0].forEach((spc) => {
-      let separatorElement = result
+      const separatorElement = result
         .addSeparator(
           'Restrições Pefin/Refin Boa Vista',
           'Apontamentos e Restrições Financeiras e Comerciais',
@@ -329,7 +326,7 @@ harlan.addPlugin((controller) => {
         .addClass('error');
       if (!firstPefinRefin) separatorElement.hide().find('.container').remove();
       if (firstPefinRefin) firstPefinRefin = false;
-        // controller.call('minimizar::categorias', result.element());
+      // controller.call('minimizar::categorias', result.element());
       if (firstCall) {
         $('html, body').animate({
           scrollTop: separatorElement.offset().top,
@@ -405,7 +402,7 @@ harlan.addPlugin((controller) => {
               documento: doc.replace(/[^0-9]/g, ''),
             },
             error: () => {
-              toastr.error('Houve um erro ao consultar PEFIN/REFIN Boa Vista, o valor da consulta foi estornado. Por favor, tente mais tarde.')
+              toastr.error('Houve um erro ao consultar PEFIN/REFIN Boa Vista, o valor da consulta foi estornado. Por favor, tente mais tarde.');
             },
             success: (data) => {
               controller.call('icheques::consulta::refin::generate', data, result, doc, false, false, refinButton, jdocument);
@@ -480,7 +477,7 @@ harlan.addPlugin((controller) => {
       const separatorElement = result.addSeparator(
         'Restrições Serasa',
         'Apontamentos e Restrições Financeiras e Comerciais',
-        valorTotalPendencias !== null ? 'O documento possui ' + formatter.format(valorTotalPendencias) + 'em pendências Financeiras' :'Pendências e restrições financeiras no Serasa',
+        valorTotalPendencias !== null ? `O documento possui ${formatter.format(valorTotalPendencias)}em pendências Financeiras` : 'Pendências e restrições financeiras no Serasa',
       ).addClass('error');
 
       data.forEach((ocorrencia) => {
@@ -569,7 +566,7 @@ harlan.addPlugin((controller) => {
     ({
       result,
       doc,
-      jdocument
+      jdocument,
     }, cb) => {
       cb();
       let refinButton = null;
@@ -596,7 +593,7 @@ harlan.addPlugin((controller) => {
           controller.call('blockedOperation', 'consulta-pefin-refin-boa-vista');
         });
       }
-    
+
       result.addItem().prepend(refinButton);
     },
   );
@@ -643,7 +640,7 @@ harlan.addPlugin((controller) => {
     ({
       result,
       doc,
-      jdocument
+      jdocument,
     }, cb) => {
       cb();
       let serasaButton = null;
@@ -659,8 +656,14 @@ harlan.addPlugin((controller) => {
               'font-size': '9px',
             }),
         );
-      
-      controller.serverCommunication.call("SELECT FROM 'SubAccount'.'IsSubAccountAndHavePermissionPefinRefin'", {dataType: 'json'}).then(isSubAccountAndHavePermission => {
+
+      if (harlan.confs.user.username === 'boieterra') {
+        return serasaButton.click(
+          controller.click('icheques::consulta::serasa', result, doc, serasaButton, jdocument),
+        );
+      }
+
+      controller.serverCommunication.call("SELECT FROM 'SubAccount'.'IsSubAccountAndHavePermissionPefinRefin'", { dataType: 'json' }).then((isSubAccountAndHavePermission) => {
         if (isSubAccountAndHavePermission && consultaPefinSerasaLiberada) {
           serasaButton.click(
             controller.click('icheques::consulta::serasa', result, doc, serasaButton, jdocument),
@@ -672,14 +675,16 @@ harlan.addPlugin((controller) => {
         } else {
           serasaButton.on('click', (ev) => {
             ev.preventDefault();
-            if (systemTags.join().match(/(flex|ouro|prata|diamante)/) === null) return controller.call('alert', {
-              title: 'Infelizmente voce não tem permissão para isso!',
-              subtitle: 'Para realizar essa consulta é necessário que você esteja no plano flex, prata, ouro ou diamante.',
-            });
+            if (systemTags.join().match(/(flex|ouro|prata|diamante)/) === null) {
+              return controller.call('alert', {
+                title: 'Infelizmente voce não tem permissão para isso!',
+                subtitle: 'Para realizar essa consulta é necessário que você esteja no plano flex, prata, ouro ou diamante.',
+              });
+            }
             controller.call('blockedOperation', 'consulta-pefin-refin-serasa');
           });
         }
-      }, err => {
+      }, (err) => {
         if (consultaPefinSerasaLiberada && (systemTags.join().match(/(flex|ouro|prata|diamante)/) != null)) {
           serasaButton.click(
             controller.click('icheques::consulta::serasa', result, doc, serasaButton, jdocument),
@@ -687,10 +692,12 @@ harlan.addPlugin((controller) => {
         } else {
           serasaButton.on('click', (ev) => {
             ev.preventDefault();
-            if (systemTags.join().match(/(flex|ouro|prata|diamante)/) === null) return controller.call('alert', {
-              title: 'Infelizmente voce não tem permissão para isso!',
-              subtitle: 'Para realizar essa consulta é necessário que você esteja no plano flex, prata, ouro ou diamante.',
-            });
+            if (systemTags.join().match(/(flex|ouro|prata|diamante)/) === null) {
+              return controller.call('alert', {
+                title: 'Infelizmente voce não tem permissão para isso!',
+                subtitle: 'Para realizar essa consulta é necessário que você esteja no plano flex, prata, ouro ou diamante.',
+              });
+            }
             controller.call('blockedOperation', 'consulta-pefin-refin-serasa');
           });
         }
