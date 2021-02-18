@@ -657,6 +657,8 @@ harlan.addPlugin((controller) => {
             }),
         );
 
+      result.addItem().prepend(serasaButton);
+
       if (harlan.confs.user.username === 'boieterra') {
         return serasaButton.click(
           controller.click('icheques::consulta::serasa', result, doc, serasaButton, jdocument),
@@ -702,7 +704,6 @@ harlan.addPlugin((controller) => {
           });
         }
       });
-      result.addItem().prepend(serasaButton);
     },
   );
 });
