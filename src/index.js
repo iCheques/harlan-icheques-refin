@@ -503,7 +503,8 @@ harlan.addPlugin((controller) => {
   });
 
   controller.registerCall('icheques::consulta::serasa', (result, doc, serasaButton, jdocument) => hasCredits(4000, () => controller.serverCommunication.call(
-    'SELECT FROM \'PROTESTOS\'.\'SERASA\'', {
+    'SELECT FROM \'PROTESTOS\'.\'SERASA\'',
+    controller.call('loader::ajax', {
       dataType: 'json',
       data: {
         documento: doc.replace(/[^0-9]/g, ''),
@@ -514,7 +515,7 @@ harlan.addPlugin((controller) => {
       error: (err) => {
         toastr.error('Houve um erro ao consultar inadimplência. Tente novamente mais tarde.');
       },
-    },
+    }),
   )));
   controller.registerTrigger(
     'ccbusca::parser',
