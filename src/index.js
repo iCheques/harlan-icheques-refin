@@ -659,10 +659,11 @@ harlan.addPlugin((controller) => {
 
       result.addItem().prepend(serasaButton);
 
-      if (harlan.confs.user.username === 'boieterra') {
-        return serasaButton.click(
-          controller.click('icheques::consulta::serasa', result, doc, serasaButton, jdocument),
-        );
+      if (controller.confs.user.username === 'boieterra') {
+        return serasaButton.on('click', (ev) => {
+          ev.preventDefault();
+          controller.click('icheques::consulta::serasa', result, doc, serasaButton, jdocument);
+        });
       }
 
       controller.serverCommunication.call("SELECT FROM 'SubAccount'.'IsSubAccountAndHavePermissionPefinRefin'", { dataType: 'json' }).then((isSubAccountAndHavePermission) => {
