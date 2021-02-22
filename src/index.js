@@ -660,13 +660,6 @@ harlan.addPlugin((controller) => {
 
       result.addItem().prepend(serasaButton);
 
-      if (controller.confs.user.username === 'boieterra') {
-        return serasaButton.on('click', (ev) => {
-          ev.preventDefault();
-          controller.click('icheques::consulta::serasa', result, doc, serasaButton, jdocument);
-        });
-      }
-
       controller.serverCommunication.call("SELECT FROM 'SubAccount'.'IsSubAccountAndHavePermissionPefinRefin'", { dataType: 'json' }).then((isSubAccountAndHavePermission) => {
         if (isSubAccountAndHavePermission && consultaPefinSerasaLiberada) {
           serasaButton.click(
