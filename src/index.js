@@ -413,6 +413,12 @@ harlan.addPlugin((controller) => {
     },
   );
 
+  const valorTotalDeDividas = (dividas) => {
+    if (!dividas) return null;
+
+    return dividas.map((divida) => Number.parseFloat(divida.valor.replace(',', '.'))).reduce((acc, cur) => acc + cur);
+  };
+
   controller.registerCall('icheques::consulta::serasa::generate', (dataRes, result, doc, alertDisabled = false, firstCallDisabled = false, serasaButton = null, jdocument) => {
     if ($.isEmptyObject(dataRes)) return;
     let data;
@@ -422,8 +428,6 @@ harlan.addPlugin((controller) => {
     } catch (e) {
       data = dataRes;
     }
-
-    const valorTotalPendencias = data.informacoes.hasOwnProperty('valorTotalPendencias') ? data.informacoes.valorTotalPendencias : null;
 
     try {
       data = data.informacoes[0].bello;
@@ -435,6 +439,8 @@ harlan.addPlugin((controller) => {
       style: 'currency',
       currency: 'BRL',
     }));
+
+    const valorTotalPendenciasFinanceiras = valorTotalDeDividas(data);
 
     if (serasaButton != null) serasaButton.remove();
 
@@ -477,7 +483,7 @@ harlan.addPlugin((controller) => {
       const separatorElement = result.addSeparator(
         'Restrições Serasa',
         'Apontamentos e Restrições Financeiras e Comerciais',
-        valorTotalPendencias !== null ? `O documento possui ${formatter.format(valorTotalPendencias)}em pendências Financeiras` : 'Pendências e restrições financeiras no Serasa',
+        valorTotalPendenciasFinanceiras !== null ? `O documento possui ${formatter.format(valorTotalPendenciasFinanceiras)}em pendências Financeiras` : 'Pendências e restrições financeiras no Serasa',
       ).addClass('error');
 
       data.forEach((ocorrencia) => {
