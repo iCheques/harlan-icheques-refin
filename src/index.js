@@ -414,7 +414,7 @@ harlan.addPlugin((controller) => {
   );
 
   const valorTotalDeDividas = (dividas) => {
-    if (!dividas) return null;
+    if (!dividas.length) return null;
 
     return dividas.map((divida) => Number.parseFloat(divida.valor.replace(',', '.'))).reduce((acc, cur) => acc + cur);
   };
